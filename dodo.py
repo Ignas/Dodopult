@@ -174,7 +174,7 @@ class Dodopult(object):
 
     reload_delay = 2
     time_loading = 0
-    power = min_power = 500.0
+    power = min_power = 200.0
     max_power = 1000.0
     power_increase = 200.0 # pixels per second per second
 
