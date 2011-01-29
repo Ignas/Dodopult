@@ -193,8 +193,8 @@ class Dodopult(object):
             self.payload = None
             self.set_sprite(self.armed_sprite)
             return
-        for dodo in self.game.dodos: # global state :/
-            if self.text.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
+        for dodo in self.game.dodos:
+            if self.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
                 self.payload = dodo
                 self.x = self.x # trigger payload placement
                 self.y = self.y # trigger payload placement
