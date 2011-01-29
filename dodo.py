@@ -145,9 +145,9 @@ class Dodopult(object):
 
     reload_delay = 2
     time_loading = 0
-    power = min_power = 10.0
+    power = min_power = 5.0
     max_power = 20.0
-    power_increase = 5.0 # pixels per second per second
+    power_increase = 10.0 # pixels per second per second
 
     def set_sprite(self, sprite):
         self.text.document.text = sprite
@@ -199,7 +199,7 @@ class Dodopult(object):
                  ('v2f', (x1, y1, x2, y2)),
             )
 
-    aim_angle = 30
+    aim_angle = 45
     min_aim_angle = 15
     max_aim_angle = 75
 
