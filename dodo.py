@@ -220,7 +220,7 @@ class Map(object):
         self.text = read_asset('map.txt').rstrip()
         self.lines = self.text.splitlines()[::-1]
 
-        self.tile_width = 40
+        self.tile_width = 100
         self.tile_height = 100
 
         self.map_width = max(map(len, self.lines)) * self.tile_width
@@ -238,7 +238,7 @@ class Map(object):
                 if slot == '#' and (len(next_line) <= map_x or next_line[map_x] == ' '):
                     image = self.images['_']
                 s = pyglet.sprite.Sprite(image,
-                                         map_x * 40, map_y * 100,
+                                         map_x * 100, map_y * 100,
                                          batch=self.background_batch)
                 # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
