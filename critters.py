@@ -13,15 +13,16 @@ class Dodo(object):
 
     def __init__(self, game):
         self.game = game
-        self.sprite = pyglet.sprite.Sprite(game.dodo_sprite)
-        self.sprite.scale = self.SPRITE_SCALE
-        self.sprite.image.anchor_y = 12 + random.randint(-1, 1)
-        self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
-        self.dead_sprite.image.anchor_x = 19
+        self.standing_sprite = pyglet.sprite.Sprite(game.dodo_sprite)
+        self.standing_sprite.scale = self.SPRITE_SCALE
+        self.standing_sprite.image.anchor_y = 12 + random.randint(-1, 1)
         self.ready_sprite = pyglet.sprite.Sprite(game.dodo_ready_sprite)
         self.ready_sprite.scale = self.SPRITE_SCALE
         self.ready_sprite.image.anchor_x = 17
         self.ready_sprite.image.anchor_y = 13
+        self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
+        self.dead_sprite.image.anchor_x = 19
+        self.sprite = self.standing_sprite
         self.dx = 0
         self.dy = 0
         self.is_alive = True
@@ -60,6 +61,11 @@ class Dodo(object):
         self.dead_sprite.y = self.y
         self.sprite = self.dead_sprite
         self.is_alive = False
+
+    def survive(self):
+        self.standing_sprite.x = self.x
+        self.standing_sprite.y = self.y
+        self.sprite = self.standing_sprite
 
     def update(self, dt):
         dt = dt * 3
@@ -109,6 +115,7 @@ class Dodo(object):
                 else:
                     self.x = x1
                     self.y = y1
+                    self.survive()
                 self.dx = self.dy = 0
             else:
                 self.dy -= self.gravity * dt
