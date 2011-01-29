@@ -68,6 +68,9 @@ class Dodopult(object):
     PAYLOAD_POS = (4 * SPRITE_SCALE, 32 * SPRITE_SCALE)
     LAUNCH_POS = (140 * SPRITE_SCALE, 150 * SPRITE_SCALE)
 
+    AIM_R = 50
+    AIM_SIZE = 0.15
+
     INITIAL_X = 500
 
     min_power = 200.0         # pixels per second
@@ -160,8 +163,8 @@ class Dodopult(object):
         self.sprite.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
-            dx1, dy1 = self.aim_vector(30)
-            dx2, dy2 = self.aim_vector(35 + self.power * 0.1)
+            dx1, dy1 = self.aim_vector(self.AIM_R)
+            dx2, dy2 = self.aim_vector(self.AIM_R + self.power * self.AIM_SIZE)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             with gl_state():
