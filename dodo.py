@@ -317,7 +317,7 @@ def on_text(text):
 def on_key_press(symbol, modifiers):
     if symbol == key.SPACE:
         game.dodopult.start_powering_up()
-    if symbol in (key.LALT, key.RALT):
+    if symbol in (key.LALT, key.RALT, key.Z):
         game.dodopult.try_load()
 
 
