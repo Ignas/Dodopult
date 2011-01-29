@@ -295,6 +295,22 @@ class Camera(object):
         self.y = game.game_map.ground_level(0) - 230
 
     @property
+    def center_x(self):
+        return int(self.x + window.width // 2)
+
+    @property
+    def center_y(self):
+        return int(self.y + window.height // 2)
+
+    @center_x.setter
+    def center_x(self, x):
+        self.x = int(x - window.height // 2)
+
+    @center_y.setter
+    def center_y(self, y):
+        self.y = int(y - window.height // 2)
+
+    @property
     def x(self):
         return self._x
 
