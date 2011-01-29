@@ -205,6 +205,7 @@ class Dodopult(object):
         for dodo in self.game.dodos:
             if self.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
                 self.payload = dodo
+                self.payload.sprite = self.payload.ready_sprite
                 self.x = self.x # trigger payload placement
                 self.y = self.y # trigger payload placement
                 self.set_sprite(self.loaded_sprite)
@@ -434,6 +435,7 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 class Game(object):
 
     dodo_sprite = load_image('Dodo.png')
+    dodo_ready_sprite = load_image('Dodo_ready_for_launch.png')
     dead_dodo_sprite = load_image('deado.png')
 
     INITIAL_DODOS = 20
