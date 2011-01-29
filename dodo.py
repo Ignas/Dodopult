@@ -166,7 +166,7 @@ class Dodopult(object):
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
             dx1, dy1 = self.aim_vector(30)
-            dx2, dy2 = self.aim_vector(35 + self.power * 0.05)
+            dx2, dy2 = self.aim_vector(35 + self.power * 0.1)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             with gl_state():
