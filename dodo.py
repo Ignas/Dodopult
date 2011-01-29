@@ -6,7 +6,8 @@ from contextlib import contextmanager
 
 import pyglet
 from pyglet.window import key
-from pyglet.gl import glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity
+from pyglet.gl import (glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity,
+                       glPushAttrib, glPopAttrib, glEnable)
 
 from critters import Dodo
 
@@ -29,6 +30,15 @@ def gl_matrix():
         yield
     finally:
         glPopMatrix()
+
+
+@contextmanager
+def gl_state(bits=pyglet.gl.GL_ALL_ATTRIB_BITS):
+    glPushAttrib(bits)
+    try:
+        yield
+    finally:
+        glPopAttrib()
 
 
 class Dodopult(object):
@@ -159,10 +169,12 @@ class Dodopult(object):
             dx2, dy2 = self.aim_vector(35 + self.power * 0.05)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
-            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
-                ('v2f', (x1, y1, x2, y2)),
-                ('c3B', (0, 0, 0, 0, 0, 0)),
-            )
+            with gl_state():
+                glEnable(pyglet.gl.GL_LINE_SMOOTH)
+                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                    ('v2f', (x1, y1, x2, y2)),
+                    ('c3B', (0, 0, 0, 0, 0, 0)),
+                )
 
     aim_angle = 45
     min_aim_angle = 15
