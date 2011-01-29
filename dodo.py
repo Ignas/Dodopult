@@ -15,7 +15,7 @@ me_text.set_style(0, len(me_text.text), {
         })
 
 me = pyglet.text.layout.TextLayout(me_text, 200, 200, multiline=True)
-me.loaded = False
+me.loaded = True
 me.x = 500
 me.y = 100
 
