@@ -318,6 +318,7 @@ dodopult = Dodopult()
 
 camera = (0, 0)
 
+
 @window.event
 def on_text_motion(motion):
     if motion == key.LEFT:
@@ -329,10 +330,12 @@ def on_text_motion(motion):
     elif motion == key.DOWN:
         dodopult.aim_down()
 
+
 @window.event
-def on_mouse_motion(x, y, dx, dy):
+def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
     global camera
-    camera = (camera[0] + dx, camera[1] + dy)
+    camera = (camera[0] - dx, camera[1] - dy)
+
 
 @window.event
 def on_text(text):
@@ -348,16 +351,16 @@ def on_text(text):
 
 @window.event
 def on_key_press(symbol, modifiers):
-     if symbol == key.SPACE:
-         dodopult.start_powering_up()
-     if symbol in (key.LALT, key.RALT):
-         dodopult.try_load()
+    if symbol == key.SPACE:
+        dodopult.start_powering_up()
+    if symbol in (key.LALT, key.RALT):
+        dodopult.try_load()
 
 
 @window.event
 def on_key_release(symbol, modifiers):
-     if symbol == key.SPACE:
-         dodopult.fire()
+    if symbol == key.SPACE:
+        dodopult.fire()
 
 
 pyglet.clock.schedule_interval(dodopult.update, 0.1)
