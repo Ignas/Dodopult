@@ -68,7 +68,7 @@ class Dodopult(object):
                        '   @')
 
     arming_sprite_2 = ('    \n'
-                       'u-. \n'
+                       'u-_ \n'
                        '   @')
 
     def __init__(self):
