@@ -379,24 +379,7 @@ for dodo in dodos:
 
 class Sky(object):
 
-    @property
-    def x(self):
-        return self.background.x
-
-    @x.setter
-    def x(self, x):
-        self.background.x = x
-
-    @property
-    def y(self):
-        return self.background.y
-
-    @y.setter
-    def y(self, y):
-        self.background.y = y
-
     def __init__(self):
-        self.batch = pyglet.graphics.Batch()
         self.background = pyglet.image.load('sky.png')
 
     def draw(self):
@@ -406,6 +389,31 @@ class Sky(object):
         glPopMatrix()
 
 sky = Sky()
+
+
+class Sea(object):
+
+    def __init__(self):
+        self.batch = pyglet.graphics.Batch()
+        self.second_batch = pyglet.graphics.Batch()
+        image = pyglet.image.load('zea.png')
+        self.first_layer = []
+        for x in range(20):
+            s = pyglet.sprite.Sprite(image,
+                                     x * image.width, -220,
+                                     batch=self.batch)
+            self.first_layer.append(s)
+
+    def draw(self):
+        self.batch.draw()
+        glPushMatrix()
+        glTranslatef(75, -20, 0)
+        self.batch.draw()
+        glTranslatef(75, -20, 0)
+        self.batch.draw()
+        glPopMatrix()
+
+sea = Sea()
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
@@ -420,6 +428,7 @@ def on_draw():
     for dodo in dodos:
         dodo.draw()
     dodopult.draw()
+    sea.draw()
     glPopMatrix()
 
 
