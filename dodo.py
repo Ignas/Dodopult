@@ -23,7 +23,7 @@ class Dodo(object):
     def x(self):
         return self.label.x
 
-    gravity = 10
+    gravity = 0.2
 
     def launch(self, dx, dy):
         self.dx = dx
@@ -97,7 +97,7 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                self.payload.launch(10, 10)
+                self.payload.launch(5, 10)
             self.armed = False
             self.payload = None
             self.set_sprite(self.unarmed_sprite)
@@ -109,7 +109,7 @@ class Dodopult(object):
         if self.payload or not self.armed:
             return
         for dodo in dodos: # global state :/
-            if self.text.x <= dodo.x <= self.text.x + 20:
+            if self.text.x - 10 <= dodo.x <= self.text.x + 20:
                 self.payload = dodo
                 self.set_sprite(self.loaded_sprite)
 
