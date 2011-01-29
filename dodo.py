@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import math
+import random
 import logging
 from contextlib import contextmanager
 
@@ -82,8 +83,6 @@ class Dodopult(object):
         self.time_loading = 0
         self.power = self.min_power
         self.powering_up = False
-        self.x = self.INITIAL_X
-        self.y = self.game.game_map.ground_level(self.x)
 
         doc = pyglet.text.document.UnformattedDocument('*\n' * 21)
         doc.set_style(0, len(doc.text), {
@@ -214,7 +213,7 @@ class Dodopult(object):
 
 class Map(object):
 
-    level = 0
+    GRASS_HEIGHT = 10
 
     def __init__(self, game):
         self.game = game
@@ -223,6 +222,8 @@ class Map(object):
 
         self.tile_width = 40
         self.tile_height = 100
+
+        self.map_width = max(map(len, self.lines)) * self.tile_width
 
         self.texture = pyglet.image.TextureGrid(
                         pyglet.image.ImageGrid(load_image('map.png'), 3, 1))
@@ -242,8 +243,6 @@ class Map(object):
                 # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
 
-    background_batch = None
-
     def draw(self):
         with gl_matrix():
             gl.glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
@@ -256,6 +255,14 @@ class Map(object):
             col -= 1
             x -= self.tile_width
         return (col + 1) * self.tile_width
+
+    def vertical_wall_right_of(self, x):
+        col = int(x / self.tile_width) + 1
+        ground = self.ground_level(x)
+        while x < self.map_width and self.ground_level(x) <= ground:
+            col += 1
+            x += self.tile_width
+        return (col - 1) * self.tile_width
 
     def ground_level(self, x):
         col = int(x / self.tile_width)
@@ -430,7 +437,21 @@ class Game(object):
 
     def __init__(self):
         self.game_map = Map(self)
+
+        x1 = 0
+        x2 = self.game_map.vertical_wall_right_of(x1)
+        if self.game_map.ground_level((x1 + x2) / 2) == 0:
+            x1 = x2
+            x2 = self.game_map.vertical_wall_right_of(x1)
+
+        log.debug("Initial level: %.1f--%.1f", x1, x2)
+
+        ground = self.game_map.ground_level((x1 + x2) / 2)
+        log.debug("Initial ground level: %.1f", ground)
+
         self.dodopult = Dodopult(self)
+        self.dodopult.x = random.randrange(x1, x2)
+        self.dodopult.y = self.game_map.ground_level(self.dodopult.x)
         pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
 
         self.sea = Sea()
