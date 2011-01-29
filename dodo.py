@@ -6,6 +6,7 @@ from contextlib import contextmanager
 
 import pyglet
 from pyglet.window import key
+from pyglet import gl
 from pyglet.gl import (glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity,
                        glPushAttrib, glPopAttrib, glEnable)
 
@@ -352,13 +353,16 @@ class Sky(object):
     def __init__(self, game):
         self.game = game
         self.background = pyglet.image.load('sky.png')
-        pyglet.gl.glClearColor(0xd / 255., 0x5d / 255., 0x93 / 255., 1.0)
+        gl.glClearColor(0xd / 255., 0x5d / 255., 0x93 / 255., 1.0)
 
     def draw(self):
         with gl_matrix():
             glLoadIdentity()
             glTranslatef(0, self.game.camera.y * -0.5, 0)
-            self.background.blit(-100, -300, height=1600, width=window.width+200)
+            with gl_state():
+                gl.glEnable(gl.GL_BLEND)
+                gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+                self.background.blit(-100, -300, height=1600, width=window.width+200)
 
 
 class Sea(object):
