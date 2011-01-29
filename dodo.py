@@ -343,9 +343,38 @@ for dodo in dodos:
     pyglet.clock.schedule_interval(dodo.update, 0.1)
 
 
+class Sky(object):
+
+    @property
+    def x(self):
+        return self.background.x
+
+    @x.setter
+    def x(self, x):
+        self.background.x = x
+
+    @property
+    def y(self):
+        return self.background.y
+
+    @y.setter
+    def y(self, y):
+        self.background.y = y
+
+    def __init__(self):
+        self.batch = pyglet.graphics.Batch()
+        self.texture = pyglet.image.load('sky.jpg')
+        self.background = pyglet.sprite.Sprite(self.texture, batch=self.batch)
+
+    def draw(self):
+        self.batch.draw()
+
+sky = Sky()
+
 @window.event
 def on_draw():
     window.clear()
+    sky.draw()
     game_map.draw()
     fps_display.draw()
     for dodo in dodos:
