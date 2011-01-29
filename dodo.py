@@ -3,6 +3,7 @@ import random
 import math
 import pyglet
 from pyglet.window import key
+from pyglet.gl import glPushMatrix, glPopMatrix, glTranslatef
 
 
 window = pyglet.window.Window(width=1024, height=600)
@@ -382,8 +383,10 @@ class Sky(object):
         self.background = pyglet.sprite.Sprite(self.texture, batch=self.batch)
 
     def draw(self):
-        self.background.x, self.background.y = (camera[0] * -0.5, camera[1] * -0.5)
+        glPushMatrix()
+        glTranslatef(camera[0] * -0.5, camera[1] * -0.5, 0)
         self.batch.draw()
+        glPopMatrix()
 
 sky = Sky()
 
