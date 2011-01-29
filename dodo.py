@@ -291,8 +291,9 @@ class Map(object):
 class Camera(object):
 
     def __init__(self, game):
+        self.game = game
         self.x = 0
-        self.y = game.game_map.ground_level(0) - 230
+        self.y = self.game.game_map.ground_level(0) - 230
 
     @property
     def center_x(self):
@@ -325,6 +326,13 @@ class Camera(object):
     @y.setter
     def y(self, y):
         self._y = max(0, y)
+
+    def update(self, dt):
+        for dodo in self.game.dodos:
+            if dodo.in_flight:
+                self.center_x, self.center_y  = dodo.x, dodo.y
+                return
+        self.center_x, self.center_y = self.game.dodopult.x, self.game.dodopult.y
 
 
 @window.event
@@ -444,10 +452,10 @@ class Game(object):
 
         self.dodos = [Dodo(self) for n in range(5)]
         for dodo in self.dodos:
-            pyglet.clock.schedule_interval(dodo.update, 1 / 25.0)
+            pyglet.clock.schedule_interval(dodo.update, 1 / 60.0)
 
         self.camera = Camera(self)
-
+        pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
 
     def draw(self):
         self.sky.draw()

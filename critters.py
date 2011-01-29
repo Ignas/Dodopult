@@ -57,7 +57,6 @@ class Dodo(object):
 
     def update(self, dt):
         if self.dx or self.dy:
-            self.game.camera.center_x, self.game.camera.center_y  = self.x, self.y
             dx, dy = self.dx * dt, self.dy * dt
             self.x += dx
             self.y += dy
@@ -106,5 +105,5 @@ class Dodo(object):
                 self.dx = self.dy = 0
             else:
                 self.dy -= self.gravity * dt
-                self.dx *= 0.98
+                self.dx *= (1 - 0.007)
 
