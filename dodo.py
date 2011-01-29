@@ -197,7 +197,8 @@ class Dodopult(object):
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
-                 ('v2f', (x1, y1, x2, y2)),
+                ('v2f', (x1, y1, x2, y2)),
+                ('c3B', (0, 0, 0, 0, 0, 0)),
             )
 
     aim_angle = 45
