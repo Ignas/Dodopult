@@ -397,13 +397,12 @@ class Sky(object):
 
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
-        self.texture = pyglet.image.load('sky.jpg')
-        self.background = pyglet.sprite.Sprite(self.texture, batch=self.batch)
+        self.background = pyglet.image.load('sky.png')
 
     def draw(self):
         glPushMatrix()
         glTranslatef(camera[0] * -0.5, camera[1] * -0.5, 0)
-        self.batch.draw()
+        self.background.blit(-1000, -300, height=1600, width=2400)
         glPopMatrix()
 
 sky = Sky()
