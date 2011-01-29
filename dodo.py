@@ -22,12 +22,13 @@ font = dict(font_name='Andale Mono',
 
 class Dodo(object):
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.sprite = pyglet.sprite.Sprite(pyglet.image.load('dodo.png'))
         self.dead_sprite = pyglet.sprite.Sprite(pyglet.image.load('deado.png'))
         self.dead_sprite.image.anchor_x = 19
         self.x = random.randrange(200, 500)
-        self.y = game_map.ground_level(self.sprite.x)
+        self.y = self.game.game_map.ground_level(self.sprite.x)
         self.dx = 0
         self.dy = 0
 
@@ -70,7 +71,7 @@ class Dodo(object):
             dx, dy = self.dx * dt, self.dy * dt
             self.x += dx
             self.y += dy
-            ground_level = game_map.ground_level(self.x)
+            ground_level = self.game.game_map.ground_level(self.x)
             if self.y < ground_level:
                 log.debug('collision: (%.1f, %.1f) + (%+.1f, %.1f) -> (%.1f, %.1f)',
                           self.x - dx, self.y - dy, dx, dy, self.x, self.y)
@@ -80,9 +81,9 @@ class Dodo(object):
                 ndx = ndy * dx / dy
                 log.debug('clip #1: (%+.1f, %+.1f)', ndx, ndy)
                 # but what if we hit a vertical wall?
-                old_ground_level = game_map.ground_level(self.x - dx)
+                old_ground_level = self.game.game_map.ground_level(self.x - dx)
                 if ground_level > old_ground_level:
-                    wall_x = game_map.vertical_wall_left_of(self.x)
+                    wall_x = self.game.game_map.vertical_wall_left_of(self.x)
                     log.debug('wall at %.1f', wall_x)
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
                     ndx2 = wall_x - self.x + dx
@@ -123,7 +124,8 @@ class Dodopult(object):
 
     powering_up = False
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         doc = pyglet.text.document.UnformattedDocument(self.armed_sprite)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
@@ -137,7 +139,7 @@ class Dodopult(object):
         self.payload = None
         self.armed = True
         self.text.x = 500
-        self.text.y = game_map.ground_level(self.text.x)
+        self.text.y = self.game.game_map.ground_level(self.text.x)
 
         doc = pyglet.text.document.UnformattedDocument('*\n' * 21)
         doc.set_style(0, len(doc.text), {
@@ -263,7 +265,7 @@ class Dodopult(object):
             self.payload = None
             self.set_sprite(self.armed_sprite)
             return
-        for dodo in dodos: # global state :/
+        for dodo in self.game.dodos: # global state :/
             if self.text.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
                 self.payload = dodo
                 self.x = self.x # trigger payload placement
@@ -276,7 +278,8 @@ class Map(object):
 
     level = 0
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.text = open('map.txt').read().rstrip()
         self.lines = self.text.splitlines()[::-1]
 
@@ -308,7 +311,7 @@ class Map(object):
 
     def draw(self):
         glPushMatrix()
-        glTranslatef(camera.x * -1, camera.y * -1, 0)
+        glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
         self.background_batch.draw()
         glPopMatrix()
 
@@ -333,16 +336,11 @@ class Map(object):
         return y
 
 
-game_map = Map()
-
-dodopult = Dodopult()
-
-
 class Camera(object):
 
-    def __init__(self):
+    def __init__(self, game):
         self.x = 0
-        self.y = game_map.ground_level(0) - 230
+        self.y = game.game_map.ground_level(0) - 230
 
     @property
     def x(self):
@@ -361,84 +359,66 @@ class Camera(object):
         self._y = max(0, y)
 
 
-camera = Camera()
-
-
 @window.event
 def on_text_motion(motion):
     if motion == key.LEFT:
-        dodopult.move_left()
+        game.dodopult.move_left()
     elif motion == key.RIGHT:
-        dodopult.move_right()
+        game.dodopult.move_right()
     elif motion == key.UP:
-        dodopult.aim_up()
+        game.dodopult.aim_up()
     elif motion == key.DOWN:
-        dodopult.aim_down()
+        game.dodopult.aim_down()
 
 
 @window.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-    camera.x -= dx
-    camera.y -= dy
+    game.camera.x -= dx
+    game.camera.y -= dy
 
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
-    log.debug('camera position: (%.1f, %.1f)', camera.x, camera.y)
+    log.debug('camera position: (%.1f, %.1f)', game.camera.x, game.camera.y)
 
 
 @window.event
 def on_text(text):
     if text == 'w':
-        camera.y += 10
+        game.camera.y += 10
     elif text == 'a':
-        camera.x -= 10
+        game.camera.x -= 10
     elif text == 's':
-        camera.y -= 10
+        game.camera.y -= 10
     elif text == 'd':
-        camera.x += 10
+        game.camera.x += 10
 
 
 @window.event
 def on_key_press(symbol, modifiers):
     if symbol == key.SPACE:
-        dodopult.start_powering_up()
+        game.dodopult.start_powering_up()
     if symbol in (key.LALT, key.RALT):
-        dodopult.try_load()
+        game.dodopult.try_load()
 
 
 @window.event
 def on_key_release(symbol, modifiers):
     if symbol == key.SPACE:
-        dodopult.fire()
-
-
-pyglet.clock.schedule_interval(dodopult.update, 0.1)
-
-
-fps_display = pyglet.clock.ClockDisplay()
-fps_display.label.y = window.height - 50
-fps_display.label.x = window.width - 170
-
-
-dodos = [Dodo() for n in range(5)]
-
-for dodo in dodos:
-    pyglet.clock.schedule_interval(dodo.update, 1 / 25.0)
+        game.dodopult.fire()
 
 
 class Sky(object):
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.background = pyglet.image.load('sky.png')
 
     def draw(self):
         glPushMatrix()
-        glTranslatef(camera.x * -0.5, camera.y * -0.5, 0)
+        glTranslatef(self.game.camera.x * -0.5, self.game.camera.y * -0.5, 0)
         self.background.blit(-1000, -300, height=1600, width=2400)
         glPopMatrix()
-
-sky = Sky()
 
 
 class Sea(object):
@@ -474,25 +454,51 @@ class Sea(object):
         self.tot_time += dt * 3
         self.tot_time %= 2 * math.pi
 
-sea = Sea()
-
-pyglet.clock.schedule_interval(sea.update, 1 / 10.0)
-
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
+
+class Game(object):
+
+    def __init__(self):
+        self.game_map = Map(self)
+        self.dodopult = Dodopult(self)
+        pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
+
+        self.sea = Sea()
+        self.sky = Sky(self)
+        pyglet.clock.schedule_interval(self.sea.update, 1 / 10.0)
+
+        self.dodos = [Dodo(self) for n in range(5)]
+        for dodo in self.dodos:
+            pyglet.clock.schedule_interval(dodo.update, 1 / 25.0)
+
+        self.camera = Camera(self)
+
+
+    def draw(self):
+        self.sky.draw()
+        self.game_map.draw()
+        glPushMatrix()
+        glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
+        for dodo in self.dodos:
+            dodo.draw()
+        self.dodopult.draw()
+        self.sea.draw()
+
+
+game = Game()
+
+
+fps_display = pyglet.clock.ClockDisplay()
+fps_display.label.y = window.height - 50
+fps_display.label.x = window.width - 170
+
 
 @window.event
 def on_draw():
     window.clear()
-    sky.draw()
-    game_map.draw()
+    game.draw()
     fps_display.draw()
-    glPushMatrix()
-    glTranslatef(camera.x * -1, camera.y * -1, 0)
-    for dodo in dodos:
-        dodo.draw()
-    dodopult.draw()
-    sea.draw()
     glPopMatrix()
 
 
