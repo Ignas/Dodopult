@@ -335,8 +335,9 @@ class Sky(object):
 
     def draw(self):
         glPushMatrix()
-        glTranslatef(self.game.camera.x * -0.5, self.game.camera.y * -0.5, 0)
-        self.background.blit(-1000, -300, height=1600, width=2400)
+        glLoadIdentity()
+        glTranslatef(0, self.game.camera.y * -0.5, 0)
+        self.background.blit(-100, -300, height=1600, width=window.width+200)
         glPopMatrix()
 
 
