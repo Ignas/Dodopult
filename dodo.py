@@ -212,6 +212,14 @@ class Dodopult(object):
                 break
 
 
+class Level(object):
+
+    def __init__(self, left, right, height):
+        self.left = left
+        self.right = right
+        self.height = height
+
+
 class Map(object):
 
     GRASS_HEIGHT = 10
@@ -243,6 +251,19 @@ class Map(object):
                                          batch=self.background_batch)
                 # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
+
+        self.levels = []
+        x1 = 0
+        while True:
+            x2 = self.vertical_wall_right_of(x1)
+            if x2 == x1:
+                break
+            ground = self.ground_level((x1 + x2) / 2)
+            if ground > 0:
+                self.levels.append(Level(x1, x2, ground))
+                log.debug('Level %d: %.1f--%.1f, ground %.1f',
+                          len(self.levels), x1, x2, ground)
+            x1 = x2
 
     def draw(self):
         with gl_matrix():
@@ -443,16 +464,9 @@ class Game(object):
     def __init__(self):
         self.game_map = Map(self)
 
-        x1 = 0
-        x2 = self.game_map.vertical_wall_right_of(x1)
-        if self.game_map.ground_level((x1 + x2) / 2) == 0:
-            x1 = x2
-            x2 = self.game_map.vertical_wall_right_of(x1)
-
-        log.debug("Initial level: %.1f--%.1f", x1, x2)
-
-        ground = self.game_map.ground_level((x1 + x2) / 2)
-        log.debug("Initial ground level: %.1f", ground)
+        x1 = self.game_map.levels[0].left
+        x2 = self.game_map.levels[0].right - 100
+        ground = self.game_map.levels[0].height
 
         self.dodopult = Dodopult(self)
         self.dodopult.x = random.randrange(x1, x2)
