@@ -151,8 +151,7 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                self.payload.launch(10 * (self.power / self.max_power),
-                                    20 * (self.power / self.max_power))
+                self.payload.launch(*self.aim_vector(self.power / self.max_power))
             self.power = 0
             self.powering_up = False
             self.armed = False
@@ -166,6 +165,23 @@ class Dodopult(object):
     def draw(self):
         self.power_bar.draw()
         self.text.draw()
+
+    aim_angle = 30
+    min_aim_angle = 15
+    max_aim_angle = 75
+    power_step = 20.0
+
+    def aim_up(self):
+        self.aim_angle == min(self.aim_angle + 1, self.max_aim_angle)
+
+    def aim_down(self):
+        self.aim_angle == max(self.aim_angle - 1, self.min_aim_angle)
+
+    def aim_vector(self, power_percentage):
+        import math
+        rad_angle = math.pi * (self.aim_angle / 180.0)
+        power = self.power_step * power_percentage
+        return power * math.cos(rad_angle), power * math.sin(rad_angle)
 
     def try_load(self):
         if not self.armed:
@@ -242,6 +258,10 @@ def on_text_motion(motion):
         dodopult.x -= 16
     elif motion == key.RIGHT:
         dodopult.x += 16
+    elif motion == key.UP:
+        dodopult.aim_up()
+    elif motion == key.DOWN:
+        dodopult.aim_down()
 
 
 @window.event
