@@ -80,7 +80,7 @@ class Dodopult(object):
     INITIAL_X = 500
 
     min_power = 200.0         # pixels per second
-    max_power = 1000.0        # pixels per seconc
+    max_power = 1000.0        # pixels per second
     power_increase = 200.0    # pixels per second per second
 
     aim_angle = 45
@@ -273,6 +273,8 @@ class Map(object):
                 self.levels.append(Level(x1, x2, ground))
                 log.debug('Level %d: %.1f--%.1f, ground %.1f',
                           len(self.levels), x1, x2, ground)
+                if len(self.levels) >= 2:
+                    self.levels[-2].next = self.levels[-1]
             x1 = x2
 
     def draw(self):
@@ -491,7 +493,14 @@ class Game(object):
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
 
     def next_level(self):
-        log.debug("Next level: ???")
+        if self.current_level.next is None:
+            log.debug("Game over")
+        else:
+            self.current_level = self.current_level.next
+            x1 = self.current_level.left + 20
+            x2 = self.current_level.right - Dodopult.MARGIN_RIGHT
+            self.dodopult.x = random.randrange(x1, x2)
+            self.dodopult.y = self.current_level.height
 
     def draw(self):
         self.sky.draw()
@@ -525,3 +534,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
