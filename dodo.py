@@ -275,7 +275,10 @@ class Map(object):
     background_batch = None
 
     def draw(self):
+        glPushMatrix()
+        glTranslatef(camera[0] * -1, camera[1] * -1, 0)
         self.background_batch.draw()
+        glPopMatrix()
 
     def vertical_wall_left_of(self, x):
         col = int(x / self.tile_width)
@@ -321,15 +324,14 @@ def on_text_motion(motion):
 @window.event
 def on_text(text):
     global camera
-    if text == 'd':
-        camera = (10, 0)
+    if text == 'w':
+        camera = (camera[0], camera[1] + 10)
     elif text == 'a':
-        camera = (0, -10)
-    elif text == 'w':
-        camera = (-10, 0)
+        camera = (camera[0] - 10, camera[1])
     elif text == 's':
-        camera = (0, 10)
-
+        camera = (camera[0], camera[1] - 10)
+    elif text == 'd':
+        camera = (camera[0] + 10, camera[1])
 
 @window.event
 def on_key_press(symbol, modifiers):
