@@ -2,7 +2,7 @@
 import pyglet
 from pyglet.window import key
 
-window = pyglet.window.Window(width=1024, height=786)
+window = pyglet.window.Window(width=1024, height=600)
 font = dict(font_name='Andale Mono',
             font_size=20)
 
