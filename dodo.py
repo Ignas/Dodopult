@@ -406,7 +406,7 @@ class Sea(object):
     def __init__(self, game):
         self.game = game
         self.batch = pyglet.graphics.Batch()
-        image = load_image('zea.png')
+        self.image = image = load_image('zea.png')
         self.first_layer = []
         self.level = 250
         for x in xrange(0, self.game.game_map.map_width, image.width):
@@ -417,7 +417,7 @@ class Sea(object):
 
     def draw(self):
         x = -75
-        y = self.level
+        y = self.level - self.image.height // 3
         radius_iter = itertools.cycle([-10, 15, -20, 15])
         phase_iter = itertools.cycle([0, 1, 0.5, 1.5])
         phase_mult_iter = itertools.cycle([1.2, 1, 1.1, 1.4, 1.5, 1.6, 1.3])
@@ -436,6 +436,9 @@ class Sea(object):
 
     def update(self, dt):
         self.phase += dt * 3
+        self.level += dt
+        if self.game.dodopult.y < self.level:
+            self.game.dodopult.y = self.level
 
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
