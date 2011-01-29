@@ -18,6 +18,7 @@ class Dodo(object):
     def __init__(self):
         self.sprite = pyglet.sprite.Sprite(pyglet.image.load('dodo.png'))
         self.dead_sprite = pyglet.sprite.Sprite(pyglet.image.load('deado.png'))
+        self.dead_sprite.image.anchor_x = 19
         self.x = random.randrange(200, 500)
         self.y = game_map.ground_level(self.sprite.x)
         self.dx = 0
