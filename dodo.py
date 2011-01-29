@@ -120,7 +120,7 @@ class Dodopult(object):
         self.power_bar = pyglet.text.layout.TextLayout(doc, 100, 800,
                                                        multiline=True)
         self.power_bar.anchor_y = 'top'
-        self.power_bar.x = window.width - 20
+        self.power_bar.x = 20
         self.power_bar.y = window.height - 30
 
     @property
@@ -318,8 +318,9 @@ pyglet.clock.schedule_interval(dodopult.update, 0.1)
 
 
 fps_display = pyglet.clock.ClockDisplay()
-fps_display.label.y = 550
-fps_display.label.x = 850
+fps_display.label.y = window.height - 50
+fps_display.label.x = window.width - 170
+
 
 dodos = [Dodo() for n in range(5)]
 
