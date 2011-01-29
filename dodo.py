@@ -312,30 +312,32 @@ class Camera(object):
         self.game = game
         self.x = 0
         self.y = self.game.game_map.ground_level(0) - 230
+        self.target_x = self.x
+        self.target_y = self.y
 
     @property
     def center_x(self):
-        return int(self.x + window.width // 2)
+        return int(self.target_x + window.width // 2)
 
     @property
     def center_y(self):
-        return int(self.y + window.height // 2)
+        return int(self.target_y + window.height // 2)
 
     @center_x.setter
     def center_x(self, x):
-        self.x = int(x - window.height // 2)
+        self.target_x = int(x - window.height // 2)
 
     @center_y.setter
     def center_y(self, y):
-        self.y = int(y - window.height // 2)
+        self.target_y = int(y - window.height // 2)
 
     @property
     def bottom_third_y(self):
-        return int(self.y + window.height // 3)
+        return int(self.target_y + window.height // 3)
 
     @bottom_third_y.setter
     def bottom_third_y(self, y):
-        self.y = int(y - window.height // 3)
+        self.target_y = int(y - window.height // 3)
 
     @property
     def x(self):
@@ -354,6 +356,8 @@ class Camera(object):
         self._y = max(0, y)
 
     def update(self, dt):
+        self.x = int(self.x - (self.x - self.target_x) * 0.1)
+        self.y = int(self.y - (self.y - self.target_y) * 0.1)
         for dodo in self.game.dodos:
             if dodo.in_flight:
                 self.center_x, self.center_y = dodo.x, dodo.y
