@@ -15,6 +15,7 @@ me_text.set_style(0, len(me_text.text), {
         })
 
 me = pyglet.text.layout.TextLayout(me_text, 200, 200, multiline=True)
+me.loaded = False
 me.x = 500
 me.y = 400
 
@@ -31,9 +32,29 @@ def on_text_motion(motion):
 @window.event
 def on_key_press(symbol, modifiers):
      if symbol == key.SPACE:
-        me_text.text = '\n'.join(['   c',
-                                  '   |',
-                                  '   @'])
+         me.loaded = False
+         me_text.text = '\n'.join(['   c',
+                                   '   |',
+                                   '   @'])
+
+reload_delay = 2
+time_loading = 0
+def update(dt):
+    global reload_delay
+    global time_loading
+    if not me.loaded:
+        time_loading += dt
+        if 1 < time_loading < reload_delay:
+            me_text.text = '\n'.join([' c  ',
+                                      '  \ ',
+                                      '   @'])
+        if time_loading > reload_delay:
+            time_loading = 0
+            me.loaded = True
+            me_text.text = '\n\nu--@'
+
+pyglet.clock.schedule_interval(update, 0.1)
+
 
 fps_display = pyglet.clock.ClockDisplay()
 
