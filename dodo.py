@@ -400,7 +400,7 @@ class Sea(object):
         self.first_layer = []
         for x in range(20):
             s = pyglet.sprite.Sprite(image,
-                                     x * image.width, -220,
+                                     x * image.width, 200,
                                      batch=self.batch)
             self.first_layer.append(s)
 
