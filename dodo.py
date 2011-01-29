@@ -2,6 +2,7 @@
 import random
 import math
 import logging
+from contextlib import contextmanager
 
 import pyglet
 from pyglet.window import key
@@ -19,6 +20,15 @@ window = pyglet.window.Window(width=1024, height=600)
 font = dict(font_name='Andale Mono',
             font_size=20,
             color=(0, 0, 0, 255))
+
+
+@contextmanager
+def gl_matrix():
+    glPushMatrix()
+    try:
+        yield
+    finally:
+        glPopMatrix()
 
 
 class Dodopult(object):
@@ -139,10 +149,9 @@ class Dodopult(object):
             self.powering_up = True
 
     def draw(self):
-        glPushMatrix()
-        glLoadIdentity()
-        self.power_bar.draw()
-        glPopMatrix()
+        with gl_matrix():
+            glLoadIdentity()
+            self.power_bar.draw()
         self.text.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
@@ -229,10 +238,9 @@ class Map(object):
     background_batch = None
 
     def draw(self):
-        glPushMatrix()
-        glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
-        self.background_batch.draw()
-        glPopMatrix()
+        with gl_matrix():
+            glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
+            self.background_batch.draw()
 
     def vertical_wall_left_of(self, x):
         col = int(x / self.tile_width)
@@ -334,11 +342,10 @@ class Sky(object):
         self.background = pyglet.image.load('sky.png')
 
     def draw(self):
-        glPushMatrix()
-        glLoadIdentity()
-        glTranslatef(0, self.game.camera.y * -0.5, 0)
-        self.background.blit(-100, -300, height=1600, width=window.width+200)
-        glPopMatrix()
+        with gl_matrix():
+            glLoadIdentity()
+            glTranslatef(0, self.game.camera.y * -0.5, 0)
+            self.background.blit(-100, -300, height=1600, width=window.width+200)
 
 
 class Sea(object):
@@ -354,20 +361,19 @@ class Sea(object):
             self.first_layer.append(s)
 
     def draw(self):
-        glPushMatrix()
-        radius = -10
-        shift = math.pi * 1.3
-        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-        self.batch.draw()
-        radius = 15
-        shift = math.pi * 0.3
-        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-        self.batch.draw()
-        radius = -20
-        shift = math.pi
-        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-        self.batch.draw()
-        glPopMatrix()
+        with gl_matrix():
+            radius = -10
+            shift = math.pi * 1.3
+            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            self.batch.draw()
+            radius = 15
+            shift = math.pi * 0.3
+            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            self.batch.draw()
+            radius = -20
+            shift = math.pi
+            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            self.batch.draw()
 
     tot_time = 0
     def update(self, dt):
@@ -398,12 +404,12 @@ class Game(object):
     def draw(self):
         self.sky.draw()
         self.game_map.draw()
-        glPushMatrix()
-        glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
-        for dodo in self.dodos:
-            dodo.draw()
-        self.dodopult.draw()
-        self.sea.draw()
+        with gl_matrix():
+            glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
+            for dodo in self.dodos:
+                dodo.draw()
+            self.dodopult.draw()
+            self.sea.draw()
 
 
 game = Game()
@@ -419,7 +425,6 @@ def on_draw():
     window.clear()
     game.draw()
     fps_display.draw()
-    glPopMatrix()
 
 
 def main():
