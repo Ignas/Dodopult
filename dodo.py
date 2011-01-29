@@ -302,6 +302,7 @@ dodopult = Dodopult()
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
+camera = (0, 0)
 
 @window.event
 def on_text_motion(motion):
@@ -313,6 +314,18 @@ def on_text_motion(motion):
         dodopult.aim_up()
     elif motion == key.DOWN:
         dodopult.aim_down()
+
+@window.event
+def on_text(text):
+    global camera
+    if text == 'd':
+        camera = (10, 0)
+    elif text == 'a':
+        camera = (0, -10)
+    elif text == 'w':
+        camera = (-10, 0)
+    elif text == 's':
+        camera = (0, 10)
 
 
 @window.event
@@ -367,6 +380,7 @@ class Sky(object):
         self.background = pyglet.sprite.Sprite(self.texture, batch=self.batch)
 
     def draw(self):
+        self.background.x, self.background.y = (camera[0] * -0.5, camera[1] * -0.5)
         self.batch.draw()
 
 sky = Sky()
