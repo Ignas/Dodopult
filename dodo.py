@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import random
+import os
 import math
 import logging
 from contextlib import contextmanager
@@ -16,10 +16,19 @@ log.setLevel(logging.DEBUG)
 log.addHandler(logging.StreamHandler())
 
 
+asset_dir = os.path.join(os.path.dirname(__file__), 'assets')
+
+
+def read_asset(filename):
+    with open(os.path.join(asset_dir, filename)) as fp:
+        return fp.read()
+
+
+def load_image(filename):
+    return pyglet.image.load(os.path.join(asset_dir, filename))
+
+
 window = pyglet.window.Window(width=1024, height=600)
-font = dict(font_name='Andale Mono',
-            font_size=20,
-            color=(0, 0, 0, 255))
 
 
 @contextmanager
@@ -221,23 +230,26 @@ class Map(object):
 
     def __init__(self, game):
         self.game = game
-        self.text = open('map.txt').read().rstrip()
+        self.text = read_asset('map.txt').rstrip()
         self.lines = self.text.splitlines()[::-1]
 
         self.tile_width = 40
         self.tile_height = 100
 
-        self.texture = pyglet.image.TextureGrid(pyglet.image.ImageGrid(pyglet.image.load('map.png'), 3, 1))
-        self.images = {'#': self.texture[0], '_': self.texture[1], ' ': self.texture[2]}
+        self.texture = pyglet.image.TextureGrid(
+                        pyglet.image.ImageGrid(load_image('map.png'), 3, 1))
+        self.images = {'#': self.texture[0],
+                       '_': self.texture[1],
+                       ' ': self.texture[2]}
         self.background_batch = pyglet.graphics.Batch()
         self.sprites = []
         for map_y, line in enumerate(self.lines):
             for map_x, slot in enumerate(line):
-                pos = (map_x * 40, map_y * 100)
                 image = self.images[slot]
                 s = pyglet.sprite.Sprite(image,
                                          map_x * 40, map_y * 100,
                                          batch=self.background_batch)
+                # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
 
     def find_this_level(self, target_level):
@@ -352,7 +364,7 @@ class Sky(object):
 
     def __init__(self, game):
         self.game = game
-        self.background = pyglet.image.load('sky.png')
+        self.background = load_image('sky.png')
         gl.glClearColor(0xd / 255., 0x5d / 255., 0x93 / 255., 1.0)
 
     def draw(self):
@@ -369,7 +381,7 @@ class Sea(object):
 
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
-        image = pyglet.image.load('zea.png')
+        image = load_image('zea.png')
         self.first_layer = []
         for x in range(20):
             s = pyglet.sprite.Sprite(image,
@@ -401,6 +413,9 @@ class Sea(object):
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 class Game(object):
+
+    dodo_sprite = load_image('dodo.png')
+    dead_dodo_sprite = load_image('deado.png')
 
     def __init__(self):
         self.game_map = Map(self)

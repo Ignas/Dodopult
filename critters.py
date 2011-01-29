@@ -1,8 +1,8 @@
 import random
-import math
 import logging
 
 import pyglet
+
 
 log = logging.getLogger('dodo')
 
@@ -11,8 +11,8 @@ class Dodo(object):
 
     def __init__(self, game):
         self.game = game
-        self.sprite = pyglet.sprite.Sprite(pyglet.image.load('dodo.png'))
-        self.dead_sprite = pyglet.sprite.Sprite(pyglet.image.load('deado.png'))
+        self.sprite = pyglet.sprite.Sprite(game.dodo_sprite)
+        self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
         self.dead_sprite.image.anchor_x = 19
         self.x = random.randrange(200, 500)
         self.y = self.game.game_map.ground_level(self.sprite.x)
@@ -71,7 +71,6 @@ class Dodo(object):
                     log.debug('inside the wall!')
                     wall_x = self.x - dx
 
-                points = []
                 if self.y - dy >= ground_level:
                     # we hit the ground from above
                     x1 = self.x - dx + (ground_level - self.y + dy) * dx / dy

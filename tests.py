@@ -1,3 +1,4 @@
+import pyglet
 from nose.tools import assert_equals, assert_true, assert_false
 
 from critters import Dodo
@@ -26,6 +27,8 @@ class FakeGame(object):
 
     def __init__(self, game_map):
         self.game_map = game_map
+        self.dodo_sprite = pyglet.image.create(1, 1)
+        self.dead_dodo_sprite = pyglet.image.create(1, 1)
 
 
 def test_collision_detection_1():
