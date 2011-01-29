@@ -7,8 +7,6 @@ from contextlib import contextmanager
 import pyglet
 from pyglet.window import key
 from pyglet import gl
-from pyglet.gl import (glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity,
-                       glPushAttrib, glPopAttrib, glEnable)
 
 from critters import Dodo
 
@@ -26,20 +24,20 @@ font = dict(font_name='Andale Mono',
 
 @contextmanager
 def gl_matrix():
-    glPushMatrix()
+    gl.glPushMatrix()
     try:
         yield
     finally:
-        glPopMatrix()
+        gl.glPopMatrix()
 
 
 @contextmanager
-def gl_state(bits=pyglet.gl.GL_ALL_ATTRIB_BITS):
-    glPushAttrib(bits)
+def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
+    gl.glPushAttrib(bits)
     try:
         yield
     finally:
-        glPopAttrib()
+        gl.glPopAttrib()
 
 
 class Dodopult(object):
@@ -161,7 +159,7 @@ class Dodopult(object):
 
     def draw(self):
         with gl_matrix():
-            glLoadIdentity()
+            gl.glLoadIdentity()
             self.power_bar.draw()
         self.text.draw()
         if self.payload:
@@ -171,8 +169,8 @@ class Dodopult(object):
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             with gl_state():
-                glEnable(pyglet.gl.GL_LINE_SMOOTH)
-                pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                gl.glEnable(gl.GL_LINE_SMOOTH)
+                pyglet.graphics.draw(2, gl.GL_LINES,
                     ('v2f', (x1, y1, x2, y2)),
                     ('c3B', (0, 0, 0, 0, 0, 0)),
                 )
@@ -252,13 +250,13 @@ class Map(object):
 
     def draw(self):
         with gl_matrix():
-            glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
+            gl.glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
             self.background_batch.draw()
 
     def vertical_wall_left_of(self, x):
         col = int(x / self.tile_width)
-        gl = self.ground_level(x)
-        while x > 0 and self.ground_level(x) >= gl:
+        ground = self.ground_level(x)
+        while x > 0 and self.ground_level(x) >= ground:
             col -= 1
             x -= self.tile_width
         return (col + 1) * self.tile_width
@@ -357,8 +355,8 @@ class Sky(object):
 
     def draw(self):
         with gl_matrix():
-            glLoadIdentity()
-            glTranslatef(0, self.game.camera.y * -0.5, 0)
+            gl.glLoadIdentity()
+            gl.glTranslatef(0, self.game.camera.y * -0.5, 0)
             with gl_state():
                 gl.glEnable(gl.GL_BLEND)
                 gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
@@ -381,15 +379,15 @@ class Sea(object):
         with gl_matrix():
             radius = -10
             shift = math.pi * 1.3
-            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
             self.batch.draw()
             radius = 15
             shift = math.pi * 0.3
-            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
             self.batch.draw()
             radius = -20
             shift = math.pi
-            glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
             self.batch.draw()
 
     tot_time = 0
@@ -422,7 +420,7 @@ class Game(object):
         self.sky.draw()
         self.game_map.draw()
         with gl_matrix():
-            glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
+            gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
             for dodo in self.dodos:
                 dodo.draw()
             self.dodopult.draw()
