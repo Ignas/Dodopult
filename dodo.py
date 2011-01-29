@@ -18,16 +18,12 @@ log.setLevel(logging.DEBUG)
 log.addHandler(logging.StreamHandler())
 
 
-asset_dir = os.path.join(os.path.dirname(__file__), 'assets')
-
-
-def read_asset(filename):
-    with open(os.path.join(asset_dir, filename)) as fp:
-        return fp.read()
+pyglet.resource.path = ['assets']
+pyglet.resource.reindex()
 
 
 def load_image(filename):
-    return pyglet.image.load(os.path.join(asset_dir, filename))
+    return pyglet.resource.image(filename)
 
 
 window = pyglet.window.Window(width=1024, height=600)
@@ -238,7 +234,7 @@ class Map(object):
 
     def __init__(self, game):
         self.game = game
-        self.text = read_asset('map.txt').rstrip()
+        self.text = pyglet.resource.file('map.txt').read().rstrip()
         self.lines = self.text.splitlines()[::-1]
 
         self.tile_width = 100
