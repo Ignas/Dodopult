@@ -50,7 +50,7 @@ class Dodo(object):
     def y(self, y):
         self.sprite.y = y
 
-    gravity = 0.2
+    gravity = 200.0
 
     def launch(self, dx, dy):
         self.dx = dx
@@ -63,7 +63,7 @@ class Dodo(object):
 
     def update(self, dt):
         if self.dx:
-            dx, dy = self.dx / dt, self.dy / dt
+            dx, dy = self.dx * dt, self.dy * dt
             self.x += dx
             self.y += dy
             ground_level = game_map.ground_level(self.x)
@@ -93,7 +93,7 @@ class Dodo(object):
                 self.y += ndy - dy
                 self.dx = self.dy = 0
             else:
-                self.dy -= self.gravity / dt
+                self.dy -= self.gravity * dt
 
 
 class Dodopult(object):
@@ -169,9 +169,9 @@ class Dodopult(object):
 
     reload_delay = 2
     time_loading = 0
-    power = min_power = 5.0
-    max_power = 20.0
-    power_increase = 10.0 # pixels per second per second
+    power = min_power = 500.0
+    max_power = 2000.0
+    power_increase = 100.0 # pixels per second per second
 
     def set_sprite(self, sprite):
         self.text.document.text = sprite
@@ -219,7 +219,7 @@ class Dodopult(object):
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
             dx1, dy1 = self.aim_vector(30)
-            dx2, dy2 = self.aim_vector(35 + 5 * self.power)
+            dx2, dy2 = self.aim_vector(35 + self.power)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
@@ -417,7 +417,7 @@ fps_display.label.x = window.width - 170
 dodos = [Dodo() for n in range(5)]
 
 for dodo in dodos:
-    pyglet.clock.schedule_interval(dodo.update, 0.1)
+    pyglet.clock.schedule_interval(dodo.update, 1 / 25.0)
 
 
 class Sky(object):
