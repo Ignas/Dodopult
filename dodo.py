@@ -60,13 +60,18 @@ class Dodopult(object):
                       load_image('Catapult_3.png'),
                       load_image('Catapult_2.png')]
 
+    reload_delay = 2 # animation duration, seconds
+
     SPRITE_SCALE = 0.5
 
     PAYLOAD_POS = (4 * SPRITE_SCALE, 32 * SPRITE_SCALE)
+    LAUNCH_POS = (140 * SPRITE_SCALE, 150 * SPRITE_SCALE)
 
     INITIAL_X = 500
 
-    powering_up = False
+    min_power = 200.0         # pixels per second
+    max_power = 1000.0        # pixels per seconc
+    power_increase = 200.0    # pixels per second per second
 
     def __init__(self, game):
         self.game = game
@@ -74,6 +79,9 @@ class Dodopult(object):
         self.sprite.scale = self.SPRITE_SCALE
         self.payload = None
         self.armed = True
+        self.time_loading = 0
+        self.power = self.min_power
+        self.powering_up = False
         self.x = self.INITIAL_X
         self.y = self.game.game_map.ground_level(self.x)
 
@@ -110,12 +118,6 @@ class Dodopult(object):
         if self.payload:
             self.payload.y = y + self.PAYLOAD_POS[1]
 
-    reload_delay = 2
-    time_loading = 0
-    power = min_power = 200.0
-    max_power = 1000.0
-    power_increase = 200.0 # pixels per second per second
-
     def set_sprite(self, sprite):
         self.sprite.image = sprite
 
@@ -139,8 +141,8 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                self.payload.x += 55
-                self.payload.y += 55
+                self.payload.x = self.x + self.LAUNCH_POS[0]
+                self.payload.y = self.y + self.LAUNCH_POS[1]
                 self.payload.launch(*self.aim_vector(self.power))
             self.power = self.min_power
             self.powering_up = False
