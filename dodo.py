@@ -238,17 +238,22 @@ class Map(object):
     def __init__(self):
         self.text = open('map.txt').read().rstrip()
         self.lines = self.text.splitlines()[::-1]
-        doc = pyglet.text.document.UnformattedDocument(self.text)
-        doc.set_style(0, len(doc.text), {
-                    'font_name': 'Andale Mono',
-                    'font_size': 50,
-                    'color': (255, 255, 255, 128)
-                })
-        self.text = pyglet.text.layout.TextLayout(doc, 5000, 5000, multiline=True)
-        self.text.height = self.text.content_height
-        self.text.anchor_x, self.text.anchor_y = 'left', 'bottom'
-        self.tile_width = self.text.content_width / max(map(len, self.lines))
-        self.tile_height = self.text.content_height / len(self.lines)
+
+        self.tile_width = 40
+        self.tile_height = 100
+
+        self.texture = pyglet.image.TextureGrid(pyglet.image.ImageGrid(pyglet.image.load('map.png'), 3, 1))
+        self.images = {'#': self.texture[0], '_': self.texture[1], ' ': self.texture[2]}
+        self.background_batch = pyglet.graphics.Batch()
+        self.sprites = []
+        for map_y, line in enumerate(self.lines):
+            for map_x, slot in enumerate(line):
+                pos = (map_x * 40, map_y * 100)
+                image = self.images[slot]
+                s = pyglet.sprite.Sprite(image,
+                                         map_x * 40, map_y * 100,
+                                         batch=self.background_batch)
+                self.sprites.append(s)
 
     def find_this_level(self, target_level):
         current_level = -1
@@ -258,8 +263,10 @@ class Map(object):
             if current_level == target_level:
                 return n
 
+    background_batch = None
+
     def draw(self):
-        self.text.draw()
+        self.background_batch.draw()
 
     def vertical_wall_left_of(self, x):
         col = int(x / self.tile_width)
@@ -333,11 +340,11 @@ for dodo in dodos:
 @window.event
 def on_draw():
     window.clear()
+    game_map.draw()
     fps_display.draw()
     for dodo in dodos:
         dodo.draw()
     dodopult.draw()
-    game_map.draw()
 
 
 def main():
