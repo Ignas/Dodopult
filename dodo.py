@@ -175,8 +175,8 @@ class Dodopult(object):
     reload_delay = 2
     time_loading = 0
     power = min_power = 500.0
-    max_power = 2000.0
-    power_increase = 100.0 # pixels per second per second
+    max_power = 1000.0
+    power_increase = 200.0 # pixels per second per second
 
     def set_sprite(self, sprite):
         self.text.document.text = sprite
@@ -224,7 +224,7 @@ class Dodopult(object):
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
             dx1, dy1 = self.aim_vector(30)
-            dx2, dy2 = self.aim_vector(35 + self.power)
+            dx2, dy2 = self.aim_vector(35 + self.power * 0.05)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
