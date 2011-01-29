@@ -46,8 +46,9 @@ class Dodo(object):
             self.label.x += self.dx / dt
             self.label.y += self.dy / dt
             self.dy -= self.gravity / dt
-            if self.label.y < 100:
-                self.label.y = 100
+            ground_level = game_map.ground_level(self.label.x)
+            if self.label.y < ground_level:
+                self.label.y = ground_level
                 self.dx = self.dy = 0
 
 
@@ -162,7 +163,7 @@ class Map(object):
 
     def __init__(self):
         self.text = open('map.txt').read().rstrip()
-        self.lines = list(reversed(open('map.txt').readlines()))
+        self.lines = self.text.splitlines()[::-1]
         doc = pyglet.text.document.UnformattedDocument(self.text)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
@@ -172,6 +173,8 @@ class Map(object):
         self.text = pyglet.text.layout.TextLayout(doc, 5000, 5000, multiline=True)
         self.text.height = self.text.content_height
         self.text.anchor_x, self.text.anchor_y = 'left', 'bottom'
+        self.tile_width = self.text.content_width / max(map(len, self.lines))
+        self.tile_height = self.text.content_height / len(self.lines)
 
     def find_this_level(self, target_level):
         current_level = -1
@@ -184,7 +187,21 @@ class Map(object):
     def draw(self):
         self.text.draw()
 
+    def ground_level(self, x):
+        col = int(x / self.tile_width)
+        y = 0
+        for line in self.lines:
+            if line[col:col+1] == '_':
+                y += 10
+                break
+            if line[col:col+1].isspace():
+                break
+            y += self.tile_height
+        return y
+
+
 game_map = Map()
+
 dodopult = Dodopult()
 
 
