@@ -300,6 +300,14 @@ class Camera(object):
         self.y = int(y - window.height // 2)
 
     @property
+    def bottom_third_y(self):
+        return int(self.y + window.height // 3)
+
+    @bottom_third_y.setter
+    def bottom_third_y(self, y):
+        self.y = int(y - window.height // 3)
+
+    @property
     def x(self):
         return self._x
 
@@ -318,9 +326,9 @@ class Camera(object):
     def update(self, dt):
         for dodo in self.game.dodos:
             if dodo.in_flight:
-                self.center_x, self.center_y  = dodo.x, dodo.y
+                self.center_x, self.center_y = dodo.x, dodo.y
                 return
-        self.center_x, self.center_y = self.game.dodopult.x, self.game.dodopult.y
+        self.center_x, self.bottom_third_y = self.game.dodopult.x, self.game.dodopult.y
 
 
 @window.event
