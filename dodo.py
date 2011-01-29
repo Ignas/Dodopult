@@ -416,7 +416,7 @@ class Sea(object):
         with gl_matrix():
             radius = -10
             shift = math.pi * 1.3
-            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(250 + math.cos(shift + self.tot_time) * radius), 0)
             self.batch.draw()
             radius = 15
             shift = math.pi * 0.3
@@ -424,6 +424,10 @@ class Sea(object):
             self.batch.draw()
             radius = -20
             shift = math.pi
+            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+            self.batch.draw()
+            radius = 30
+            shift = math.pi * 0.5
             gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
             self.batch.draw()
 
