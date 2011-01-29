@@ -231,22 +231,16 @@ class Map(object):
                        ' ': self.texture[2]}
         self.background_batch = pyglet.graphics.Batch()
         self.sprites = []
-        for map_y, line in enumerate(self.lines):
+        for map_y, (line, next_line) in enumerate(zip(self.lines, self.lines[1:])):
             for map_x, slot in enumerate(line):
                 image = self.images[slot]
+                if slot == '#' and (len(next_line) <= map_x or next_line[map_x] == ' '):
+                    image = self.images['_']
                 s = pyglet.sprite.Sprite(image,
                                          map_x * 40, map_y * 100,
                                          batch=self.background_batch)
                 # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
-
-    def find_this_level(self, target_level):
-        current_level = -1
-        for n, line in enumerate(self.lines):
-            if '_' in line:
-                current_level += 1
-            if current_level == target_level:
-                return n
 
     background_batch = None
 
@@ -267,9 +261,6 @@ class Map(object):
         col = int(x / self.tile_width)
         y = 0
         for line in self.lines:
-            if line[col:col+1] == '_':
-                y += 10
-                break
             if line[col:col+1].isspace():
                 break
             y += self.tile_height
