@@ -51,42 +51,31 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 class Dodopult(object):
 
-    armed_sprite = ('    \n'
-                    '    \n'
-                    'u--@')
+    armed_sprite = loaded_sprite = load_image('Catapult_1.png')
 
-    loaded_sprite = armed_sprite
+    unarmed_sprite = load_image('Catapult_5.png')
 
-    unarmed_sprite = ('   c\n'
-                      '   |\n'
-                      '   @')
+    arming_sprites = [unarmed_sprite,
+                      load_image('Catapult_4.png'),
+                      load_image('Catapult_3.png'),
+                      load_image('Catapult_2.png')]
 
-    arming_sprite_1 = (' c  \n'
-                       '  \ \n'
-                       '   @')
+    SPRITE_SCALE = 0.5
 
-    arming_sprite_2 = ('    \n'
-                       'u-_ \n'
-                       '   @')
+    PAYLOAD_POS = (4 * SPRITE_SCALE, 32 * SPRITE_SCALE)
+
+    INITIAL_X = 500
 
     powering_up = False
 
     def __init__(self, game):
         self.game = game
-        doc = pyglet.text.document.UnformattedDocument(self.armed_sprite)
-        doc.set_style(0, len(doc.text), {
-                    'font_name': 'Andale Mono',
-                    'font_size': 20,
-                    'color': (0, 0, 0, 255)
-                })
-        self.text = pyglet.text.layout.TextLayout(doc, 100, 100,
-                                                  multiline=True)
-        self.text.anchor_x = 'left'
-        self.text.anchor_y = 'bottom'
+        self.sprite = pyglet.sprite.Sprite(self.armed_sprite)
+        self.sprite.scale = self.SPRITE_SCALE
         self.payload = None
         self.armed = True
-        self.text.x = 500
-        self.text.y = self.game.game_map.ground_level(self.text.x)
+        self.x = self.INITIAL_X
+        self.y = self.game.game_map.ground_level(self.x)
 
         doc = pyglet.text.document.UnformattedDocument('*\n' * 21)
         doc.set_style(0, len(doc.text), {
@@ -103,23 +92,23 @@ class Dodopult(object):
 
     @property
     def x(self):
-        return self.text.x
+        return self.sprite.x
 
     @x.setter
     def x(self, x):
-        self.text.x = x
+        self.sprite.x = x
         if self.payload:
-            self.payload.x = x
+            self.payload.x = x + self.PAYLOAD_POS[0]
 
     @property
     def y(self):
-        return self.text.y
+        return self.sprite.y
 
     @y.setter
     def y(self, y):
-        self.text.y = y
+        self.sprite.y = y
         if self.payload:
-            self.payload.y = y + 30
+            self.payload.y = y + self.PAYLOAD_POS[1]
 
     reload_delay = 2
     time_loading = 0
@@ -128,7 +117,7 @@ class Dodopult(object):
     power_increase = 200.0 # pixels per second per second
 
     def set_sprite(self, sprite):
-        self.text.document.text = sprite
+        self.sprite.image = sprite
 
     def update(self, dt):
         power = (self.power - self.min_power) / (self.max_power - self.min_power)
@@ -139,12 +128,9 @@ class Dodopult(object):
             self.power = min(self.power + dt * self.power_increase, self.max_power)
         if not self.armed:
             self.time_loading += dt
-            if self.time_loading < self.reload_delay / 3.0:
-                pass
-            elif self.time_loading < self.reload_delay * 2 / 3.0:
-                self.set_sprite(self.arming_sprite_1)
-            elif self.time_loading < self.reload_delay:
-                self.set_sprite(self.arming_sprite_2)
+            if self.time_loading < self.reload_delay:
+                n = int(self.time_loading * len(self.arming_sprites) / self.reload_delay)
+                self.set_sprite(self.arming_sprites[n])
             else:
                 self.time_loading = 0
                 self.armed = True
@@ -170,7 +156,7 @@ class Dodopult(object):
         with gl_matrix():
             gl.glLoadIdentity()
             self.power_bar.draw()
-        self.text.draw()
+        self.sprite.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
             dx1, dy1 = self.aim_vector(30)
