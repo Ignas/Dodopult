@@ -301,7 +301,7 @@ class Map(object):
 
     def draw(self):
         glPushMatrix()
-        glTranslatef(camera[0] * -1, camera[1] * -1, 0)
+        glTranslatef(camera.x * -1, camera.y * -1, 0)
         self.background_batch.draw()
         glPopMatrix()
 
@@ -330,7 +330,31 @@ game_map = Map()
 
 dodopult = Dodopult()
 
-camera = (0, game_map.ground_level(0) - 100)
+
+class Camera(object):
+
+    def __init__(self):
+        self.x = 0
+        self.y = game_map.ground_level(0) - 230
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    @x.setter
+    def x(self, x):
+        self._x = max(0, x)
+
+    @y.setter
+    def y(self, y):
+        self._y = max(0, y)
+
+
+camera = Camera()
 
 
 @window.event
@@ -347,21 +371,26 @@ def on_text_motion(motion):
 
 @window.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-    global camera
-    camera = (camera[0] - dx, camera[1] - dy)
+    camera.x -= dx
+    camera.y -= dy
+
+
+@window.event
+def on_mouse_release(x, y, button, modifiers):
+    log.debug('camera position: (%.1f, %.1f)', camera.x, camera.y)
 
 
 @window.event
 def on_text(text):
-    global camera
     if text == 'w':
-        camera = (camera[0], camera[1] + 10)
+        camera.y += 10
     elif text == 'a':
-        camera = (camera[0] - 10, camera[1])
+        camera.x -= 10
     elif text == 's':
-        camera = (camera[0], camera[1] - 10)
+        camera.y -= 10
     elif text == 'd':
-        camera = (camera[0] + 10, camera[1])
+        camera.x += 10
+
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -398,7 +427,7 @@ class Sky(object):
 
     def draw(self):
         glPushMatrix()
-        glTranslatef(camera[0] * -0.5, camera[1] * -0.5, 0)
+        glTranslatef(camera.x * -0.5, camera.y * -0.5, 0)
         self.background.blit(-1000, -300, height=1600, width=2400)
         glPopMatrix()
 
@@ -409,21 +438,20 @@ class Sea(object):
 
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
-        self.second_batch = pyglet.graphics.Batch()
         image = pyglet.image.load('zea.png')
         self.first_layer = []
         for x in range(20):
             s = pyglet.sprite.Sprite(image,
-                                     x * image.width, 200,
+                                     x * image.width, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
 
     def draw(self):
         self.batch.draw()
         glPushMatrix()
-        glTranslatef(75, -20, 0)
+        glTranslatef(-75, -20, 0)
         self.batch.draw()
-        glTranslatef(75, -20, 0)
+        glTranslatef(-75, -20, 0)
         self.batch.draw()
         glPopMatrix()
 
@@ -438,7 +466,7 @@ def on_draw():
     game_map.draw()
     fps_display.draw()
     glPushMatrix()
-    glTranslatef(camera[0] * -1, camera[1] * -1, 0)
+    glTranslatef(camera.x * -1, camera.y * -1, 0)
     for dodo in dodos:
         dodo.draw()
     dodopult.draw()
