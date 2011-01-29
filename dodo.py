@@ -243,7 +243,7 @@ class Map(object):
 
         self.texture = pyglet.image.TextureGrid(
                         pyglet.image.ImageGrid(load_image('map.png'), 3, 1))
-        self.images = {'#': self.texture[0],
+        self.images = {'#': load_image('Earth_1.png'),
                        '_': self.texture[1],
                        ' ': self.texture[2]}
         self.background_batch = pyglet.graphics.Batch()
