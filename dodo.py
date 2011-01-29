@@ -370,17 +370,6 @@ def on_text_motion(motion):
 
 
 @window.event
-def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-    game.camera.x -= dx
-    game.camera.y -= dy
-
-
-@window.event
-def on_mouse_release(x, y, button, modifiers):
-    log.debug('camera position: (%.1f, %.1f)', game.camera.x, game.camera.y)
-
-
-@window.event
 def on_key_press(symbol, modifiers):
     if symbol == key.SPACE:
         game.dodopult.start_powering_up()
