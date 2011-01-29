@@ -199,7 +199,7 @@ class Dodopult(object):
             return
         if self.payload:
             # let's unload
-            self.payload.y -= 30
+            self.payload.y -= self.PAYLOAD_POS[1]
             self.payload = None
             self.set_sprite(self.armed_sprite)
             return
