@@ -67,6 +67,9 @@ class Dodo(object):
                 log.debug('ground level at %.1f: %.1f', self.x, ground_level)
                 wall_x = self.game.game_map.vertical_wall_left_of(self.x)
                 log.debug('wall at %.1f', wall_x)
+                if wall_x < self.x - dx:
+                    log.debug('inside the wall!')
+                    wall_x = self.x - dx
 
                 points = []
                 if self.y - dy >= ground_level:
