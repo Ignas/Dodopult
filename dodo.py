@@ -17,6 +17,10 @@ class Dodo(object):
     def draw(self):
         self.label.draw()
 
+    @property
+    def x(self):
+        return self.label.x
+
 
 class Dodopult(object):
 
@@ -82,6 +86,14 @@ class Dodopult(object):
     def draw(self):
         self.text.draw()
 
+    def try_load(self):
+        if self.loaded or not self.armed:
+            return
+        for dodo in dodos: # global state :/
+            if self.text.x <= dodo.x <= self.text.x + 20:
+                self.loaded = True
+                self.set_sprite(self.loaded_sprite)
+
 
 class Map(object):
     pass
@@ -104,6 +116,8 @@ def on_text_motion(motion):
 def on_key_press(symbol, modifiers):
      if symbol == key.SPACE:
          dodopult.fire()
+     if symbol in (key.LALT, key.RALT):
+         dodopult.try_load()
 
 
 pyglet.clock.schedule_interval(dodopult.update, 0.1)
