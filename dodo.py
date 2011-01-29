@@ -316,7 +316,7 @@ game_map = Map()
 
 dodopult = Dodopult()
 
-camera = (0, 0)
+camera = (0, game_map.ground_level(0) - 100)
 
 
 @window.event
