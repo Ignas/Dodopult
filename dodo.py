@@ -3,7 +3,7 @@ import random
 import math
 import pyglet
 from pyglet.window import key
-from pyglet.gl import glPushMatrix, glPopMatrix, glTranslatef
+from pyglet.gl import glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity
 
 
 window = pyglet.window.Window(width=1024, height=600)
@@ -189,7 +189,10 @@ class Dodopult(object):
             self.powering_up = True
 
     def draw(self):
+        glPushMatrix()
+        glLoadIdentity()
         self.power_bar.draw()
+        glPopMatrix()
         self.text.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
@@ -398,9 +401,12 @@ def on_draw():
     sky.draw()
     game_map.draw()
     fps_display.draw()
+    glPushMatrix()
+    glTranslatef(camera[0] * -1, camera[1] * -1, 0)
     for dodo in dodos:
         dodo.draw()
     dodopult.draw()
+    glPopMatrix()
 
 
 def main():
