@@ -23,6 +23,18 @@ class Dodo(object):
     def x(self):
         return self.label.x
 
+    @x.setter
+    def x(self, x):
+        self.label.x = x
+
+    @property
+    def y(self):
+        return self.label.y
+
+    @y.setter
+    def y(self, y):
+        self.label.y = y
+
     gravity = 0.2
 
     def launch(self, dx, dy):
@@ -45,9 +57,7 @@ class Dodopult(object):
                     '    \n'
                     'u--@')
 
-    loaded_sprite = ('    \n'
-                     '    \n'
-                    u'\xfb--@')
+    loaded_sprite = armed_sprite
 
     unarmed_sprite = ('   c\n'
                       '   |\n'
@@ -73,6 +83,26 @@ class Dodopult(object):
         self.armed = True
         self.text.x = 500
         self.text.y = 0
+
+    @property
+    def x(self):
+        return self.text.x
+
+    @x.setter
+    def x(self, x):
+        self.text.x = x
+        if self.payload:
+            self.payload.x = x
+
+    @property
+    def y(self):
+        return self.text.y
+
+    @y.setter
+    def y(self, y):
+        self.text.y = y
+        if self.payload:
+            self.payload.y = y + 130
 
     reload_delay = 2
     time_loading = 0
@@ -111,6 +141,8 @@ class Dodopult(object):
         for dodo in dodos: # global state :/
             if self.text.x - 10 <= dodo.x <= self.text.x + 20:
                 self.payload = dodo
+                self.x = self.x # trigger payload placement
+                self.y = self.y # trigger payload placement
                 self.set_sprite(self.loaded_sprite)
 
 
@@ -134,9 +166,9 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 @window.event
 def on_text_motion(motion):
     if motion == key.LEFT:
-        dodopult.text.x -= 16
+        dodopult.x -= 16
     elif motion == key.RIGHT:
-        dodopult.text.x += 16
+        dodopult.x += 16
 
 @window.event
 def on_key_press(symbol, modifiers):
