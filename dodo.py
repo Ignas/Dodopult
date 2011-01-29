@@ -171,7 +171,8 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                self.payload.launch(*self.aim_vector(self.power / self.max_power))
+                length = self.power_step * (self.power / self.max_power)
+                self.payload.launch(*self.aim_vector(length))
             self.power = 0
             self.powering_up = False
             self.armed = False
@@ -185,6 +186,15 @@ class Dodopult(object):
     def draw(self):
         self.power_bar.draw()
         self.text.draw()
+        if self.payload:
+            x, y = self.payload.x + 5, self.payload.y
+            dx1, dy1 = self.aim_vector(20)
+            dx2, dy2 = self.aim_vector(30 + 5 * self.power)
+            x1, y1 = x + dx1, y + dy1
+            x2, y2 = x + dx2, y + dy2
+            pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+                 ('v2f', (x1, y1, x2, y2)),
+            )
 
     aim_angle = 30
     min_aim_angle = 15
@@ -192,16 +202,14 @@ class Dodopult(object):
     power_step = 20.0
 
     def aim_up(self):
-        self.aim_angle == min(self.aim_angle + 1, self.max_aim_angle)
+        self.aim_angle = min(self.aim_angle + 1, self.max_aim_angle)
 
     def aim_down(self):
-        self.aim_angle == max(self.aim_angle - 1, self.min_aim_angle)
+        self.aim_angle = max(self.aim_angle - 1, self.min_aim_angle)
 
-    def aim_vector(self, power_percentage):
-        import math
-        rad_angle = math.pi * (self.aim_angle / 180.0)
-        power = self.power_step * power_percentage
-        return power * math.cos(rad_angle), power * math.sin(rad_angle)
+    def aim_vector(self, length):
+        rad_angle = math.radians(self.aim_angle)
+        return length * math.cos(rad_angle), length * math.sin(rad_angle)
 
     def try_load(self):
         if not self.armed:
