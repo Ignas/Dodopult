@@ -161,16 +161,15 @@ class Map(object):
     level = 0
 
     def __init__(self):
-        self.text = open('map.txt').read()
+        self.text = open('map.txt').read().rstrip()
         self.lines = list(reversed(open('map.txt').readlines()))
         doc = pyglet.text.document.UnformattedDocument(self.text)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
-                    'font_size': 5,
+                    'font_size': 50,
                     'color': (255, 255, 255, 128)
                 })
         self.text = pyglet.text.layout.TextLayout(doc, 5000, 5000, multiline=True)
-        self.text.width = self.text.content_width
         self.text.height = self.text.content_height
         self.text.anchor_x, self.text.anchor_y = 'left', 'bottom'
 
