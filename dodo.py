@@ -402,13 +402,13 @@ class Sky(object):
 
 class Sea(object):
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.batch = pyglet.graphics.Batch()
         image = load_image('zea.png')
         self.first_layer = []
-        for x in range(20):
-            s = pyglet.sprite.Sprite(image,
-                                     x * image.width, 0,
+        for x in xrange(0, self.game.game_map.map_width, image.width):
+            s = pyglet.sprite.Sprite(image, x, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
 
@@ -460,7 +460,7 @@ class Game(object):
         self.dodopult.y = ground
         pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
 
-        self.sea = Sea()
+        self.sea = Sea(self)
         self.sky = Sky(self)
         pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
 
