@@ -496,6 +496,19 @@ class Game(object):
         self.camera = Camera(self)
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
 
+    def count_surviving_dodos(self):
+        above = 0
+        here = 0
+        for dodo in self.dodos:
+            if dodo.is_alive:
+                if dodo.y > self.current_level.height:
+                    above += 1
+                elif dodo.y == self.current_level.height:
+                    here += 1
+        if here == 0 and above > 0:
+            log.debug("Going to next level with %d live dodos", above)
+            self.next_level()
+
     def next_level(self):
         for dodo in self.dodos:
             if dodo.is_alive and dodo.y < self.sea.level:

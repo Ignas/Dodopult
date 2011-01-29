@@ -118,6 +118,7 @@ class Dodo(object):
                     self.y = y1
                     self.survive()
                 self.dx = self.dy = 0
+                self.game.count_surviving_dodos()
             else:
                 self.dy -= self.gravity * dt
                 self.dx *= (1 - 0.007)
