@@ -16,30 +16,33 @@ font = dict(font_name='Andale Mono',
 class Dodo(object):
 
     def __init__(self):
-        self.label = pyglet.text.Label('.', **font)
-        self.label.x = random.randrange(200, 500)
-        self.label.y = game_map.ground_level(self.label.x)
+        self.texture = pyglet.image.load('dodo.png')
+        self.sprite = pyglet.sprite.Sprite(self.texture)
+        self.x = random.randrange(200, 500)
+        self.y = game_map.ground_level(self.sprite.x)
+        self.sprite.anchor_x = 9
+        self.sprite.anchor_y = 20
         self.dx = 0
         self.dy = 0
 
     def draw(self):
-        self.label.draw()
+        self.sprite.draw()
 
     @property
     def x(self):
-        return self.label.x
+        return self.sprite.x
 
     @x.setter
     def x(self, x):
-        self.label.x = x
+        self.sprite.x = x
 
     @property
     def y(self):
-        return self.label.y
+        return self.sprite.y
 
     @y.setter
     def y(self, y):
-        self.label.y = y
+        self.sprite.y = y
 
     gravity = 0.2
 
@@ -50,25 +53,25 @@ class Dodo(object):
     def update(self, dt):
         if self.dx:
             dx, dy = self.dx / dt, self.dy / dt
-            self.label.x += dx
-            self.label.y += dy
-            ground_level = game_map.ground_level(self.label.x)
-            if self.label.y < ground_level:
+            self.x += dx
+            self.y += dy
+            ground_level = game_map.ground_level(self.x)
+            if self.y < ground_level:
                 # scale (dx, dy) -> (ndx, ndy) so old_y + ndy == ground_level
-                ndy = ground_level - self.label.y + dy
+                ndy = ground_level - self.y + dy
                 ndx = ndy * dx / dy
                 # but what if we hit a vertical wall?
-                old_ground_level = game_map.ground_level(self.label.x - dx)
+                old_ground_level = game_map.ground_level(self.x - dx)
                 if ground_level > old_ground_level:
-                    wall_x = game_map.vertical_wall_left_of(self.label.x) - 7
+                    wall_x = game_map.vertical_wall_left_of(self.x) - 7
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
-                    ndx2 = wall_x - self.label.x + dx
+                    ndx2 = wall_x - self.x + dx
                     ndy2 = ndx2 * dy / dx
                     # now see which vector is shorter
                     if math.hypot(ndx2, ndy2) < math.hypot(ndx, ndy):
                         ndx, ndy = ndx2, ndy2
-                self.label.x += ndx - dx
-                self.label.y += ndy - dy
+                self.x += ndx - dx
+                self.y += ndy - dy
                 self.dx = self.dy = 0
             else:
                 self.dy -= self.gravity / dt
