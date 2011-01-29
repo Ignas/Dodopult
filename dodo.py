@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pyglet
 from pyglet.window import key
 
