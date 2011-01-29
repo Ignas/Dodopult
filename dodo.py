@@ -72,6 +72,8 @@ class Dodopult(object):
                        'u-_ \n'
                        '   @')
 
+    powering_up = False
+
     def __init__(self):
         doc = pyglet.text.document.UnformattedDocument(self.armed_sprite)
         doc.set_style(0, len(doc.text), {
@@ -87,6 +89,19 @@ class Dodopult(object):
         self.armed = True
         self.text.x = 500
         self.text.y = game_map.ground_level(self.text.x)
+
+        doc = pyglet.text.document.UnformattedDocument('*\n' * (self.power + 1))
+        doc.set_style(0, len(doc.text), {
+                    'font_name': 'Andale Mono',
+                    'font_size': 20,
+                    'line_spacing': 12,
+                    'color': (255, 255, 255, 255)
+                })
+        self.power_bar = pyglet.text.layout.TextLayout(doc, 100, 800,
+                                                       multiline=True)
+        self.power_bar.anchor_y = 'top'
+        self.power_bar.x = window.width - 20
+        self.power_bar.y = window.height - 30
 
     @property
     def x(self):
@@ -110,11 +125,16 @@ class Dodopult(object):
 
     reload_delay = 2
     time_loading = 0
+    power = 0
+    max_power = 20.0
 
     def set_sprite(self, sprite):
         self.text.document.text = sprite
 
     def update(self, dt):
+        self.power_bar.document.text = ' \n' * int(self.max_power - self.power) +  '*\n' * (self.power + 1)
+        if self.powering_up:
+            self.power = min(self.power + 1, self.max_power)
         if not self.armed:
             self.time_loading += dt
             if self.time_loading < self.reload_delay / 3.0:
@@ -131,12 +151,20 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                self.payload.launch(5, 10)
+                self.payload.launch(10 * (self.power / self.max_power),
+                                    20 * (self.power / self.max_power))
+            self.power = 0
+            self.powering_up = False
             self.armed = False
             self.payload = None
             self.set_sprite(self.unarmed_sprite)
 
+    def start_powering_up(self):
+        if self.armed:
+            self.powering_up = True
+
     def draw(self):
+        self.power_bar.draw()
         self.text.draw()
 
     def try_load(self):
@@ -215,12 +243,19 @@ def on_text_motion(motion):
     elif motion == key.RIGHT:
         dodopult.x += 16
 
+
 @window.event
 def on_key_press(symbol, modifiers):
      if symbol == key.SPACE:
-         dodopult.fire()
+         dodopult.start_powering_up()
      if symbol in (key.LALT, key.RALT):
          dodopult.try_load()
+
+
+@window.event
+def on_key_release(symbol, modifiers):
+     if symbol == key.SPACE:
+         dodopult.fire()
 
 
 pyglet.clock.schedule_interval(dodopult.update, 0.1)
