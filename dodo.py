@@ -71,6 +71,9 @@ class Dodopult(object):
 
     PICKUP_RANGE = (-15, +15)
 
+    MARGIN_LEFT = -60
+    MARGIN_RIGHT = 130
+
     AIM_R = 50
     AIM_SIZE = 0.15
 
@@ -79,6 +82,10 @@ class Dodopult(object):
     min_power = 200.0         # pixels per second
     max_power = 1000.0        # pixels per seconc
     power_increase = 200.0    # pixels per second per second
+
+    aim_angle = 45
+    min_aim_angle = 15
+    max_aim_angle = 75
 
     def __init__(self, game):
         self.game = game
@@ -179,15 +186,11 @@ class Dodopult(object):
                     ('c3B', (0, 0, 0, 0, 0, 0)),
                 )
 
-    aim_angle = 45
-    min_aim_angle = 15
-    max_aim_angle = 75
-
     def move_left(self):
-        self.x = max(0, self.x - 15)
+        self.x = max(self.game.current_level.left + self.MARGIN_LEFT, self.x - 15)
 
     def move_right(self):
-        self.x += 15
+        self.x = min(self.game.current_level.right - self.MARGIN_RIGHT, self.x + 15)
 
     def aim_up(self):
         self.aim_angle = min(self.aim_angle + 1, self.max_aim_angle)
@@ -439,6 +442,8 @@ class Sea(object):
         self.level += dt
         if self.game.dodopult.y < self.level:
             self.game.dodopult.y = self.level
+        if self.level >= self.game.current_level.height:
+            self.game.next_level()
 
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
@@ -455,9 +460,11 @@ class Game(object):
     def __init__(self):
         self.game_map = Map(self)
 
-        x1 = self.game_map.levels[0].left
-        x2 = self.game_map.levels[0].right - 100
-        ground = self.game_map.levels[0].height
+        self.current_level = lvl = self.game_map.levels[0]
+
+        x1 = lvl.left + 20
+        x2 = lvl.right - Dodopult.MARGIN_RIGHT
+        ground = lvl.height
 
         self.dodopult = Dodopult(self)
         self.dodopult.x = random.randrange(x1, x2)
@@ -478,6 +485,9 @@ class Game(object):
 
         self.camera = Camera(self)
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
+
+    def next_level(self):
+        log.debug("Next level: ???")
 
     def draw(self):
         self.sky.draw()
