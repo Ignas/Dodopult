@@ -12,7 +12,7 @@ class Dodo(object):
     def __init__(self):
         self.label = pyglet.text.Label('.', **font)
         self.label.x = random.randrange(200, 500)
-        self.label.y = 100
+        self.label.y = game_map.ground_level(self.label.x)
         self.dx = 0
         self.dy = 0
 
@@ -86,7 +86,7 @@ class Dodopult(object):
         self.payload = None
         self.armed = True
         self.text.x = 500
-        self.text.y = 100
+        self.text.y = game_map.ground_level(self.text.x)
 
     @property
     def x(self):
