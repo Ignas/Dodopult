@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 import random
 import math
+import logging
+
 import pyglet
 from pyglet.window import key
 from pyglet.gl import glPushMatrix, glPopMatrix, glTranslatef, glLoadIdentity
+
+
+log = logging.getLogger('dodo')
+log.setLevel(logging.DEBUG)
+log.addHandler(logging.StreamHandler())
 
 
 window = pyglet.window.Window(width=1024, height=600)
@@ -61,18 +68,25 @@ class Dodo(object):
             self.y += dy
             ground_level = game_map.ground_level(self.x)
             if self.y < ground_level:
+                log.debug('collision: (%.1f, %.1f) + (%+.1f, %.1f) -> (%.1f, %.1f)',
+                          self.x - dx, self.y - dy, dx, dy, self.x, self.y)
+                log.debug('ground level at %.1f: %.1f', self.x, ground_level)
                 # scale (dx, dy) -> (ndx, ndy) so old_y + ndy == ground_level
                 ndy = ground_level - self.y + dy
                 ndx = ndy * dx / dy
+                log.debug('clip #1: (%+.1f, %+.1f)', ndx, ndy)
                 # but what if we hit a vertical wall?
                 old_ground_level = game_map.ground_level(self.x - dx)
                 if ground_level > old_ground_level:
                     wall_x = game_map.vertical_wall_left_of(self.x)
+                    log.debug('wall at %.1f', wall_x)
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
                     ndx2 = wall_x - self.x + dx
                     ndy2 = ndx2 * dy / dx
-                    # now see which vector is shorter
+                    log.debug('clip #2: (%+.1f, %+.1f)', ndx2, ndy2)
+                    # now see which vector is shorter -- XXX bug
                     if math.hypot(ndx2, ndy2) < math.hypot(ndx, ndy):
+                        log.debug('clip #2 wins')
                         ndx, ndy = ndx2, ndy2
                         self.go_extinct()
                 self.x += ndx - dx
@@ -204,8 +218,8 @@ class Dodopult(object):
         self.text.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
-            dx1, dy1 = self.aim_vector(20)
-            dx2, dy2 = self.aim_vector(30 + 5 * self.power)
+            dx1, dy1 = self.aim_vector(30)
+            dx2, dy2 = self.aim_vector(35 + 5 * self.power)
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
