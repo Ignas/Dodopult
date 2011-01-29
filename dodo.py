@@ -7,7 +7,8 @@ from pyglet.window import key
 
 window = pyglet.window.Window(width=1024, height=600)
 font = dict(font_name='Andale Mono',
-            font_size=20)
+            font_size=20,
+            color=(0, 0, 0, 255))
 
 
 
@@ -99,7 +100,7 @@ class Dodopult(object):
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
                     'font_size': 20,
-                    'color': (255, 255, 255, 255)
+                    'color': (0, 0, 0, 255)
                 })
         self.text = pyglet.text.layout.TextLayout(doc, 100, 100,
                                                   multiline=True)
