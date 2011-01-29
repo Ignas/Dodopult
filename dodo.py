@@ -169,7 +169,9 @@ class Dodopult(object):
             x1, y1 = x + dx1, y + dy1
             x2, y2 = x + dx2, y + dy2
             with gl_state():
-                gl.glEnable(gl.GL_LINE_SMOOTH)
+                # Not sure which bit is being clobbered by this drawing
+                # op, but if I don't save it, the sky disappears when on
+                # Windows.
                 pyglet.graphics.draw(2, gl.GL_LINES,
                     ('v2f', (x1, y1, x2, y2)),
                     ('c3B', (0, 0, 0, 0, 0, 0)),
