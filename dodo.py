@@ -94,6 +94,7 @@ class Dodo(object):
                 self.dx = self.dy = 0
             else:
                 self.dy -= self.gravity * dt
+                self.dx *= 0.98
 
 
 class Dodopult(object):
