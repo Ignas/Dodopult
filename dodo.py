@@ -1,10 +1,26 @@
 #!/usr/bin/env python
 import pyglet
+import random
 from pyglet.window import key
 
 window = pyglet.window.Window(width=1024, height=600)
 font = dict(font_name='Andale Mono',
             font_size=20)
+
+class Dodo(object):
+
+    def __init__(self):
+        self.label = pyglet.text.Label('.', **font)
+        self.label.x = random.randrange(200, 500)
+        self.label.y = 100
+
+    def draw(self):
+        self.label.draw()
+
+
+class Map(object):
+    pass
+
 
 
 me_text = pyglet.text.document.UnformattedDocument('\n\nu--@')
@@ -58,10 +74,14 @@ pyglet.clock.schedule_interval(update, 0.1)
 
 fps_display = pyglet.clock.ClockDisplay()
 
+dodos = [Dodo() for n in range(5)]
+
 @window.event
 def on_draw():
     window.clear()
     fps_display.draw()
+    for dodo in dodos:
+        dodo.draw()
     me.draw()
 
 
