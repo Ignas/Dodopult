@@ -144,6 +144,7 @@ class Dodopult(object):
                 self.x = self.x # trigger payload placement
                 self.y = self.y # trigger payload placement
                 self.set_sprite(self.loaded_sprite)
+                break
 
 
 class Map(object):
