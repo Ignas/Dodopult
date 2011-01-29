@@ -452,15 +452,30 @@ class Sea(object):
             self.first_layer.append(s)
 
     def draw(self):
-        self.batch.draw()
         glPushMatrix()
-        glTranslatef(-75, -20, 0)
+        radius = -10
+        shift = math.pi * 1.3
+        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
         self.batch.draw()
-        glTranslatef(-75, -20, 0)
+        radius = 15
+        shift = math.pi * 0.3
+        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
+        self.batch.draw()
+        radius = -20
+        shift = math.pi
+        glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
         self.batch.draw()
         glPopMatrix()
 
+    tot_time = 0
+    def update(self, dt):
+        self.tot_time += dt * 3
+        self.tot_time %= 2 * math.pi
+
 sea = Sea()
+
+pyglet.clock.schedule_interval(sea.update, 1 / 10.0)
+
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
