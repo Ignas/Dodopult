@@ -90,3 +90,24 @@ def test_collision_detection_3():
     assert_equals(dodo.dx, 0)
     assert_equals(dodo.dy, 0)
 
+
+def test_collision_detection_4():
+    #     +-------
+    #     | *
+    #     |/
+    #     |
+    #    /|
+    #   * |
+    # ----+ ground 
+    dodo = Dodo(FakeGame(FakeMap(ground_level=100, wall_x=40)))
+    dodo.x = 20.0
+    dodo.y = 30.0
+    dodo.dx = 40.0
+    dodo.dy = 50.0
+    dodo.update(1.0)
+    assert_equals(dodo.x, 40.0)
+    assert_equals(dodo.y, 55.0)
+    assert_false(dodo.is_alive)
+    assert_equals(dodo.dx, 0)
+    assert_equals(dodo.dy, 0)
+

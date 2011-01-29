@@ -56,7 +56,7 @@ class Dodo(object):
         self.is_alive = False
 
     def update(self, dt):
-        if self.dx:
+        if self.dx or self.dy:
             dx, dy = self.dx * dt, self.dy * dt
             self.x += dx
             self.y += dy
@@ -65,26 +65,42 @@ class Dodo(object):
                 log.debug('collision: (%.1f, %.1f) + (%+.1f, %.1f) -> (%.1f, %.1f)',
                           self.x - dx, self.y - dy, dx, dy, self.x, self.y)
                 log.debug('ground level at %.1f: %.1f', self.x, ground_level)
-                # scale (dx, dy) -> (ndx, ndy) so old_y + ndy == ground_level
-                ndy = ground_level - self.y + dy
-                ndx = ndy * dx / dy
-                log.debug('clip #1: (%+.1f, %+.1f)', ndx, ndy)
-                # but what if we hit a vertical wall?
+                wall_x = self.game.game_map.vertical_wall_left_of(self.x)
+
+                points = []
+                if self.y - dy >= ground_level:
+                    # we hit the ground from above
+                    x1 = self.x - dx + (ground_level - self.y + dy) * dx / dy
+                    y1 = ground_level
+                    log.debug('clip against ground: (%.1f, %.1f)', x1, y1)
+                else:
+                    x1 = y1 = None
+
                 old_ground_level = self.game.game_map.ground_level(self.x - dx)
                 if ground_level > old_ground_level:
-                    wall_x = self.game.game_map.vertical_wall_left_of(self.x)
+                    # we hit a wall from the left
                     log.debug('wall at %.1f', wall_x)
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
-                    ndx2 = wall_x - self.x + dx
-                    ndy2 = ndx2 * dy / dx
-                    log.debug('clip #2: (%+.1f, %+.1f)', ndx2, ndy2)
-                    # now see which vector is shorter -- XXX bug
-                    if math.hypot(ndx2, ndy2) > math.hypot(ndx, ndy):
-                        log.debug('clip #2 wins')
-                        ndx, ndy = ndx2, ndy2
-                        self.go_extinct()
-                self.x += ndx - dx
-                self.y += ndy - dy
+                    y2 = self.y - dy + (wall_x - self.x + dx) * dy / dx
+                    x2 = wall_x
+                    log.debug('clip against wall: (%.1f, %.1f)', x2, y2)
+                    if y2 > ground_level:
+                        log.debug('wall clip above ground')
+                        x2 = y2 = None
+                    if x1 is not None and x1 < wall_x:
+                        log.debug('ground clip left of cliff')
+                        x1 = y1 = None
+                else:
+                    x2 = y2 = None
+
+                if x1 is None:
+                    log.debug('wall wins')
+                    self.x = x2
+                    self.y = y2
+                    self.go_extinct()
+                else:
+                    self.x = x1
+                    self.y = y1
                 self.dx = self.dy = 0
             else:
                 self.dy -= self.gravity * dt
