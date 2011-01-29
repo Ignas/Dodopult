@@ -409,7 +409,7 @@ class Game(object):
 
         self.sea = Sea()
         self.sky = Sky(self)
-        pyglet.clock.schedule_interval(self.sea.update, 1 / 10.0)
+        pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
 
         self.dodos = [Dodo(self) for n in range(5)]
         for dodo in self.dodos:
