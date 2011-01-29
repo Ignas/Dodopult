@@ -316,9 +316,6 @@ game_map = Map()
 
 dodopult = Dodopult()
 
-
-window.push_handlers(pyglet.window.event.WindowEventLogger())
-
 camera = (0, 0)
 
 @window.event
@@ -406,6 +403,8 @@ class Sky(object):
         glPopMatrix()
 
 sky = Sky()
+
+window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 @window.event
 def on_draw():
