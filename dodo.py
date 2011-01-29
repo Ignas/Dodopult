@@ -20,48 +20,68 @@ class Dodo(object):
 
 class Dodopult(object):
 
+    armed_sprite = ('    \n'
+                    '    \n'
+                    'u--@')
+
+    loaded_sprite = ('    \n'
+                     '    \n'
+                    u'\xfb--@')
+
+    unarmed_sprite = ('   c\n'
+                      '   |\n'
+                      '   @')
+
+    arming_sprite_1 = (' c  \n'
+                       '  \ \n'
+                       '   @')
+
+    arming_sprite_2 = ('    \n'
+                       'u-. \n'
+                       '   @')
+
     def __init__(self):
-        doc = pyglet.text.document.UnformattedDocument('\n\nu--@')
+        doc = pyglet.text.document.UnformattedDocument(self.armed_sprite)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
                     'font_size': 20,
                     'color': (255, 255, 255, 255)
                 })
         self.text = pyglet.text.layout.TextLayout(doc, 200, 200, multiline=True)
-        self.loaded = True
+        self.loaded = False
+        self.armed = True
         self.text.x = 500
         self.text.y = 0
 
     reload_delay = 2
     time_loading = 0
 
+    def set_sprite(self, sprite):
+        self.text.document.text = sprite
+
     def update(self, dt):
-        if not self.loaded:
+        if not self.armed:
             self.time_loading += dt
             if self.time_loading < self.reload_delay / 3.0:
                 pass
             elif self.time_loading < self.reload_delay * 2 / 3.0:
-                self.text.document.text = '\n'.join([' c  ',
-                                                     '  \ ',
-                                                     '   @'])
+                self.set_sprite(self.arming_sprite_1)
             elif self.time_loading < self.reload_delay:
-                self.text.document.text = '\n'.join(['    ',
-                                                     'u-. ',
-                                                     '   @'])
+                self.set_sprite(self.arming_sprite_2)
             else:
                 self.time_loading = 0
-                self.loaded = True
-                self.text.document.text = '\n\nu--@'
+                self.armed = True
+                self.set_sprite(self.armed_sprite)
 
     def fire(self):
-        if self.loaded:
+        if self.armed:
+            self.armed = False
             self.loaded = False
-            self.text.document.text = '\n'.join(['   c',
-                                                 '   |',
-                                                 '   @'])
+            self.set_sprite(self.unarmed_sprite)
 
     def draw(self):
         self.text.draw()
+
 
 class Map(object):
     pass
