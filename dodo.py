@@ -203,6 +203,12 @@ class Dodopult(object):
     min_aim_angle = 15
     max_aim_angle = 75
 
+    def move_left(self):
+        self.x = max(0, self.x - 15)
+
+    def move_right(self):
+        self.x += 15
+
     def aim_up(self):
         self.aim_angle = min(self.aim_angle + 1, self.max_aim_angle)
 
@@ -300,9 +306,9 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 @window.event
 def on_text_motion(motion):
     if motion == key.LEFT:
-        dodopult.x -= 16
+        dodopult.move_left()
     elif motion == key.RIGHT:
-        dodopult.x += 16
+        dodopult.move_right()
     elif motion == key.UP:
         dodopult.aim_up()
     elif motion == key.DOWN:
