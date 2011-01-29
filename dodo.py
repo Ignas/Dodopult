@@ -211,6 +211,8 @@ pyglet.clock.schedule_interval(dodopult.update, 0.1)
 
 
 fps_display = pyglet.clock.ClockDisplay()
+fps_display.label.y = 550
+fps_display.label.x = 850
 
 dodos = [Dodo() for n in range(5)]
 
