@@ -387,8 +387,11 @@ def on_key_press(symbol, modifiers):
         game.dodopult.start_powering_up()
     if symbol in (key.LALT, key.RALT, key.Z):
         game.dodopult.try_load()
+    # DEBUG/CHEAT CODES
     if symbol == key.PLUS:
         game.sea.level += 10
+    if symbol == key.N:
+        game.next_level()
 
 
 @window.event
@@ -517,9 +520,9 @@ class Game(object):
             log.debug("Game over")
         else:
             self.current_level = self.current_level.next
-            x1 = self.current_level.left + 20
-            x2 = self.current_level.right - Dodopult.MARGIN_RIGHT
-            self.dodopult.x = random.randrange(x1, x2)
+            x1 = min(self.current_level.left + 20, self.current_level.right)
+            x2 = max(x1, self.current_level.right - Dodopult.MARGIN_RIGHT)
+            self.dodopult.x = random.randint(x1, x2)
             self.dodopult.y = self.current_level.height
 
     def draw(self):
