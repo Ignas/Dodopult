@@ -79,7 +79,7 @@ class Dodo(object):
                     ndy2 = ndx2 * dy / dx
                     log.debug('clip #2: (%+.1f, %+.1f)', ndx2, ndy2)
                     # now see which vector is shorter -- XXX bug
-                    if math.hypot(ndx2, ndy2) < math.hypot(ndx, ndy):
+                    if math.hypot(ndx2, ndy2) > math.hypot(ndx, ndy):
                         log.debug('clip #2 wins')
                         ndx, ndy = ndx2, ndy2
                         self.go_extinct()
