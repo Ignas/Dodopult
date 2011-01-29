@@ -381,18 +381,6 @@ def on_mouse_release(x, y, button, modifiers):
 
 
 @window.event
-def on_text(text):
-    if text == 'w':
-        game.camera.y += 10
-    elif text == 'a':
-        game.camera.x -= 10
-    elif text == 's':
-        game.camera.y -= 10
-    elif text == 'd':
-        game.camera.x += 10
-
-
-@window.event
 def on_key_press(symbol, modifiers):
     if symbol == key.SPACE:
         game.dodopult.start_powering_up()
