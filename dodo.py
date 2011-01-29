@@ -352,6 +352,7 @@ class Sky(object):
     def __init__(self, game):
         self.game = game
         self.background = pyglet.image.load('sky.png')
+        pyglet.gl.glClearColor(0xd / 255., 0x5d / 255., 0x93 / 255., 1.0)
 
     def draw(self):
         with gl_matrix():
