@@ -35,6 +35,10 @@ class Dodo(object):
         self.sprite.draw()
 
     @property
+    def in_flight(self):
+        return self.dx != 0 or self.dy != 0
+
+    @property
     def x(self):
         return self.sprite.x
 
@@ -258,7 +262,7 @@ class Dodopult(object):
             self.set_sprite(self.armed_sprite)
             return
         for dodo in dodos: # global state :/
-            if self.text.x - 10 <= dodo.x <= self.text.x + 20:
+            if self.text.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
                 self.payload = dodo
                 self.x = self.x # trigger payload placement
                 self.y = self.y # trigger payload placement
