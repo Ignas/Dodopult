@@ -224,10 +224,12 @@ class Dodopult(object):
 
 class Level(object):
 
-    def __init__(self, left, right, height):
+    def __init__(self, number, left, right, height, next=None):
+        self.number = number
         self.left = left
         self.right = right
         self.height = height
+        self.next = next
 
 
 class Map(object):
@@ -270,7 +272,7 @@ class Map(object):
                 break
             ground = self.ground_level((x1 + x2) / 2)
             if ground > 0:
-                self.levels.append(Level(x1, x2, ground))
+                self.levels.append(Level(len(self.levels) + 1, x1, x2, ground))
                 log.debug('Level %d: %.1f--%.1f, ground %.1f',
                           len(self.levels), x1, x2, ground)
                 if len(self.levels) >= 2:
@@ -445,7 +447,7 @@ class Sea(object):
 
     def update(self, dt):
         self.phase += dt * 3
-        self.level += dt
+        self.level += dt * 1.414 ** (self.game.current_level.number - 1)
         if self.game.dodopult.y < self.level:
             self.game.dodopult.y = self.level
         if self.level >= self.game.current_level.height:
