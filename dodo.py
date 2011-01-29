@@ -78,14 +78,14 @@ class Dodopult(object):
                     'font_size': 20,
                     'color': (255, 255, 255, 255)
                 })
-        self.text = pyglet.text.layout.TextLayout(doc, 200, 200,
+        self.text = pyglet.text.layout.TextLayout(doc, 100, 100,
                                                   multiline=True)
         self.text.anchor_x = 'left'
-        self.text.anchor_y = 'top'
+        self.text.anchor_y = 'bottom'
         self.payload = None
         self.armed = True
         self.text.x = 500
-        self.text.y = 200
+        self.text.y = 100
 
     @property
     def x(self):
@@ -105,7 +105,7 @@ class Dodopult(object):
     def y(self, y):
         self.text.y = y
         if self.payload:
-            self.payload.y = y - 70
+            self.payload.y = y + 30
 
     reload_delay = 2
     time_loading = 0
