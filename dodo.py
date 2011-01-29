@@ -110,7 +110,7 @@ class Dodopult(object):
         self.text.x = 500
         self.text.y = game_map.ground_level(self.text.x)
 
-        doc = pyglet.text.document.UnformattedDocument('*\n' * (self.power + 1))
+        doc = pyglet.text.document.UnformattedDocument('*\n' * 21)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
                     'font_size': 20,
@@ -145,16 +145,20 @@ class Dodopult(object):
 
     reload_delay = 2
     time_loading = 0
-    power = 0
+    power = min_power = 10.0
     max_power = 20.0
+    power_increase = 5.0 # pixels per second per second
 
     def set_sprite(self, sprite):
         self.text.document.text = sprite
 
     def update(self, dt):
-        self.power_bar.document.text = ' \n' * int(self.max_power - self.power) +  '*\n' * int(self.power + 1)
+        power = (self.power - self.min_power) / (self.max_power - self.min_power)
+        n1 = 1 + int(power * 20)
+        n2 = 21 - n1
+        self.power_bar.document.text = ' \n' * n2 +  '*\n' * n1
         if self.powering_up:
-            self.power = min(self.power + 1, self.max_power)
+            self.power = min(self.power + dt * self.power_increase, self.max_power)
         if not self.armed:
             self.time_loading += dt
             if self.time_loading < self.reload_delay / 3.0:
@@ -171,9 +175,8 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
-                length = self.power_step * (self.power / self.max_power)
-                self.payload.launch(*self.aim_vector(length))
-            self.power = 0
+                self.payload.launch(*self.aim_vector(self.power))
+            self.power = self.min_power
             self.powering_up = False
             self.armed = False
             self.payload = None
@@ -199,7 +202,6 @@ class Dodopult(object):
     aim_angle = 30
     min_aim_angle = 15
     max_aim_angle = 75
-    power_step = 20.0
 
     def aim_up(self):
         self.aim_angle = min(self.aim_angle + 1, self.max_aim_angle)
