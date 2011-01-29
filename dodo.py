@@ -3,6 +3,7 @@ import os
 import math
 import random
 import logging
+import itertools
 from contextlib import contextmanager
 
 import pyglet
@@ -407,34 +408,34 @@ class Sea(object):
         self.batch = pyglet.graphics.Batch()
         image = load_image('zea.png')
         self.first_layer = []
+        self.level = 250
         for x in xrange(0, self.game.game_map.map_width, image.width):
             s = pyglet.sprite.Sprite(image, x, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
+        self.phase = 0
 
     def draw(self):
-        with gl_matrix():
-            radius = -10
-            shift = math.pi * 1.3
-            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(250 + math.cos(shift + self.tot_time) * radius), 0)
-            self.batch.draw()
-            radius = 15
-            shift = math.pi * 0.3
-            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-            self.batch.draw()
-            radius = -20
-            shift = math.pi
-            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-            self.batch.draw()
-            radius = 30
-            shift = math.pi * 0.5
-            gl.glTranslatef(int(-75 + math.sin(shift + self.tot_time) * radius), int(-20 + math.cos(shift + self.tot_time) * radius), 0)
-            self.batch.draw()
+        x = -75
+        y = self.level
+        radius_iter = itertools.cycle([-10, 15, -20, 15])
+        phase_iter = itertools.cycle([0, 1, 0.5, 1.5])
+        phase_mult_iter = itertools.cycle([1.2, 1, 1.1, 1.4, 1.5, 1.6, 1.3])
+        phase = 0
+        while y > self.game.camera.y - 100:
+            radius = radius_iter.next()
+            radius_x = radius * 2
+            radius_y = radius * 0.5
+            phase = phase * 0.5 + (self.phase + math.pi * phase_iter.next()) / phase_mult_iter.next()
+            with gl_matrix():
+                gl.glTranslatef(int(x + math.sin(phase) * radius_x),
+                                int(y + math.cos(phase) * radius_y),
+                                0)
+                self.batch.draw()
+            y -= 20
 
-    tot_time = 0
     def update(self, dt):
-        self.tot_time += dt * 3
-        self.tot_time %= 2 * math.pi
+        self.phase += dt * 3
 
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
