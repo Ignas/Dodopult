@@ -42,16 +42,17 @@ class Dodopult(object):
                 self.text.document.text = '\n'.join([' c  ',
                                                      '  \ ',
                                                      '   @'])
-                if self.time_loading > self.reload_delay:
-                    time_loading = 0
-                    self.loaded = True
-                    self.text.document.text = '\n\nu--@'
+            elif self.time_loading > self.reload_delay:
+                self.time_loading = 0
+                self.loaded = True
+                self.text.document.text = '\n\nu--@'
 
     def fire(self):
-        self.loaded = False
-        self.text.document.text = '\n'.join(['   c',
-                                             '   |',
-                                             '   @'])
+        if self.loaded:
+            self.loaded = False
+            self.text.document.text = '\n'.join(['   c',
+                                                 '   |',
+                                                 '   @'])
 
     def draw(self):
         self.text.draw()
