@@ -15,12 +15,13 @@ class Dodo(object):
         self.game = game
         self.sprite = pyglet.sprite.Sprite(game.dodo_sprite)
         self.sprite.scale = self.SPRITE_SCALE
+        self.sprite.image.anchor_y = 12 + random.randint(-1, 1)
         self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
         self.dead_sprite.image.anchor_x = 19
         self.ready_sprite = pyglet.sprite.Sprite(game.dodo_ready_sprite)
         self.ready_sprite.scale = self.SPRITE_SCALE
         self.ready_sprite.image.anchor_x = 17
-        self.ready_sprite.image.anchor_y = 10
+        self.ready_sprite.image.anchor_y = 13
         self.dx = 0
         self.dy = 0
         self.is_alive = True
