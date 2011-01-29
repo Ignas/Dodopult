@@ -139,7 +139,13 @@ class Dodopult(object):
         self.text.draw()
 
     def try_load(self):
-        if self.payload or not self.armed:
+        if not self.armed:
+            return
+        if self.payload:
+            # let's unload
+            self.payload.y -= 30
+            self.payload = None
+            self.set_sprite(self.armed_sprite)
             return
         for dodo in dodos: # global state :/
             if self.text.x - 10 <= dodo.x <= self.text.x + 20:
