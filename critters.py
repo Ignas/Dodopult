@@ -9,13 +9,14 @@ log = logging.getLogger('dodo')
 
 class Dodo(object):
 
+    SPRITE_SCALE = 0.5
+
     def __init__(self, game):
         self.game = game
         self.sprite = pyglet.sprite.Sprite(game.dodo_sprite)
+        self.sprite.scale = self.SPRITE_SCALE
         self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
         self.dead_sprite.image.anchor_x = 19
-        self.x = random.randrange(200, 500)
-        self.y = self.game.game_map.ground_level(self.sprite.x)
         self.dx = 0
         self.dy = 0
         self.is_alive = True

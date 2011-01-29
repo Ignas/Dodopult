@@ -433,7 +433,7 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 class Game(object):
 
-    dodo_sprite = load_image('dodo.png')
+    dodo_sprite = load_image('Dodo.png')
     dead_dodo_sprite = load_image('deado.png')
 
     INITIAL_DODOS = 20
