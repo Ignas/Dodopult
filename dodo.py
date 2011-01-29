@@ -16,12 +16,10 @@ font = dict(font_name='Andale Mono',
 class Dodo(object):
 
     def __init__(self):
-        self.texture = pyglet.image.load('dodo.png')
-        self.sprite = pyglet.sprite.Sprite(self.texture)
+        self.sprite = pyglet.sprite.Sprite(pyglet.image.load('dodo.png'))
+        self.dead_sprite = pyglet.sprite.Sprite(pyglet.image.load('deado.png'))
         self.x = random.randrange(200, 500)
         self.y = game_map.ground_level(self.sprite.x)
-        self.sprite.anchor_x = 9
-        self.sprite.anchor_y = 20
         self.dx = 0
         self.dy = 0
 
@@ -50,6 +48,11 @@ class Dodo(object):
         self.dx = dx
         self.dy = dy
 
+    def go_extinct(self):
+        self.dead_sprite.x = self.x
+        self.dead_sprite.y = self.y
+        self.sprite = self.dead_sprite
+
     def update(self, dt):
         if self.dx:
             dx, dy = self.dx / dt, self.dy / dt
@@ -63,13 +66,14 @@ class Dodo(object):
                 # but what if we hit a vertical wall?
                 old_ground_level = game_map.ground_level(self.x - dx)
                 if ground_level > old_ground_level:
-                    wall_x = game_map.vertical_wall_left_of(self.x) - 7
+                    wall_x = game_map.vertical_wall_left_of(self.x)
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
                     ndx2 = wall_x - self.x + dx
                     ndy2 = ndx2 * dy / dx
                     # now see which vector is shorter
                     if math.hypot(ndx2, ndy2) < math.hypot(ndx, ndy):
                         ndx, ndy = ndx2, ndy2
+                        self.go_extinct()
                 self.x += ndx - dx
                 self.y += ndy - dy
                 self.dx = self.dy = 0
@@ -326,6 +330,11 @@ def on_text_motion(motion):
         dodopult.aim_up()
     elif motion == key.DOWN:
         dodopult.aim_down()
+
+@window.event
+def on_mouse_motion(x, y, dx, dy):
+    global camera
+    camera = (camera[0] + dx, camera[1] + dy)
 
 @window.event
 def on_text(text):
