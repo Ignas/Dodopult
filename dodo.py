@@ -204,6 +204,8 @@ class Dodopult(object):
     def fire(self):
         if self.armed:
             if self.payload:
+                self.payload.x += 55
+                self.payload.y += 55
                 self.payload.launch(*self.aim_vector(self.power))
             self.power = self.min_power
             self.powering_up = False
