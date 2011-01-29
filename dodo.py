@@ -387,6 +387,8 @@ def on_key_press(symbol, modifiers):
         game.dodopult.start_powering_up()
     if symbol in (key.LALT, key.RALT, key.Z):
         game.dodopult.try_load()
+    if symbol == key.PLUS:
+        game.sea.level += 10
 
 
 @window.event
@@ -495,6 +497,9 @@ class Game(object):
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
 
     def next_level(self):
+        for dodo in self.dodos:
+            if dodo.is_alive and dodo.y < self.sea.level:
+                dodo.go_extinct()
         if self.current_level.next is None:
             log.debug("Game over")
         else:

@@ -63,9 +63,10 @@ class Dodo(object):
         self.is_alive = False
 
     def survive(self):
-        self.standing_sprite.x = self.x
-        self.standing_sprite.y = self.y
-        self.sprite = self.standing_sprite
+        if self.is_alive:
+            self.standing_sprite.x = self.x
+            self.standing_sprite.y = self.y
+            self.sprite = self.standing_sprite
 
     def update(self, dt):
         dt = dt * 3
