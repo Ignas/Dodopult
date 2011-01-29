@@ -13,6 +13,8 @@ class Dodo(object):
         self.label = pyglet.text.Label('.', **font)
         self.label.x = random.randrange(200, 500)
         self.label.y = 100
+        self.dx = 0
+        self.dy = 0
 
     def draw(self):
         self.label.draw()
@@ -20,6 +22,21 @@ class Dodo(object):
     @property
     def x(self):
         return self.label.x
+
+    gravity = 10
+
+    def launch(self, dx, dy):
+        self.dx = dx
+        self.dy = dy
+
+    def update(self, dt):
+        if self.dx:
+            self.label.x += self.dx / dt
+            self.label.y += self.dy / dt
+            self.dy -= self.gravity / dt
+            if self.label.y < 100:
+                self.label.y = 100
+                self.dx = self.dy = 0
 
 
 class Dodopult(object):
@@ -52,7 +69,7 @@ class Dodopult(object):
                     'color': (255, 255, 255, 255)
                 })
         self.text = pyglet.text.layout.TextLayout(doc, 200, 200, multiline=True)
-        self.loaded = False
+        self.payload = None
         self.armed = True
         self.text.x = 500
         self.text.y = 0
@@ -79,19 +96,21 @@ class Dodopult(object):
 
     def fire(self):
         if self.armed:
+            if self.payload:
+                self.payload.launch(10, 10)
             self.armed = False
-            self.loaded = False
+            self.payload = None
             self.set_sprite(self.unarmed_sprite)
 
     def draw(self):
         self.text.draw()
 
     def try_load(self):
-        if self.loaded or not self.armed:
+        if self.payload or not self.armed:
             return
         for dodo in dodos: # global state :/
             if self.text.x <= dodo.x <= self.text.x + 20:
-                self.loaded = True
+                self.payload = dodo
                 self.set_sprite(self.loaded_sprite)
 
 
@@ -133,6 +152,10 @@ pyglet.clock.schedule_interval(dodopult.update, 0.1)
 fps_display = pyglet.clock.ClockDisplay()
 
 dodos = [Dodo() for n in range(5)]
+
+for dodo in dodos:
+    pyglet.clock.schedule_interval(dodo.update, 0.1)
+
 
 @window.event
 def on_draw():
