@@ -38,11 +38,17 @@ class Dodopult(object):
     def update(self, dt):
         if not self.loaded:
             self.time_loading += dt
-            if 1 < self.time_loading < self.reload_delay:
+            if self.time_loading < self.reload_delay / 3.0:
+                pass
+            elif self.time_loading < self.reload_delay * 2 / 3.0:
                 self.text.document.text = '\n'.join([' c  ',
                                                      '  \ ',
                                                      '   @'])
-            elif self.time_loading > self.reload_delay:
+            elif self.time_loading < self.reload_delay:
+                self.text.document.text = '\n'.join(['    ',
+                                                     'u-. ',
+                                                     '   @'])
+            else:
                 self.time_loading = 0
                 self.loaded = True
                 self.text.document.text = '\n\nu--@'
