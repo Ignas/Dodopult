@@ -68,6 +68,8 @@ class Dodopult(object):
     PAYLOAD_POS = (4 * SPRITE_SCALE, 32 * SPRITE_SCALE)
     LAUNCH_POS = (140 * SPRITE_SCALE, 150 * SPRITE_SCALE)
 
+    PICKUP_RANGE = (-15, +15)
+
     AIM_R = 50
     AIM_SIZE = 0.15
 
@@ -206,7 +208,8 @@ class Dodopult(object):
             self.set_sprite(self.armed_sprite)
             return
         for dodo in self.game.dodos:
-            if self.x - 10 <= dodo.x <= self.x + 20 and not dodo.in_flight:
+            if (self.x + self.PICKUP_RANGE[0] <= dodo.x <= self.x + self.PICKUP_RANGE[1]
+                and not dodo.in_flight and dodo.is_alive):
                 self.payload = dodo
                 self.payload.sprite = self.payload.ready_sprite
                 self.x = self.x # trigger payload placement
