@@ -18,22 +18,50 @@ class Dodo(object):
         self.label.draw()
 
 
+class Dodopult(object):
+
+    def __init__(self):
+        doc = pyglet.text.document.UnformattedDocument('\n\nu--@')
+        doc.set_style(0, len(doc.text), {
+                    'font_name': 'Andale Mono',
+                    'font_size': 20,
+                    'color': (255, 255, 255, 255)
+                })
+        self.text = pyglet.text.layout.TextLayout(doc, 200, 200, multiline=True)
+        self.loaded = True
+        self.text.x = 500
+        self.text.y = 0
+
+    reload_delay = 2
+    time_loading = 0
+
+    def update(self, dt):
+        if not self.loaded:
+            self.time_loading += dt
+            if 1 < self.time_loading < self.reload_delay:
+                self.text.document.text = '\n'.join([' c  ',
+                                                     '  \ ',
+                                                     '   @'])
+                if self.time_loading > self.reload_delay:
+                    time_loading = 0
+                    self.loaded = True
+                    self.text.document.text = '\n\nu--@'
+
+    def fire(self):
+        self.loaded = False
+        self.text.document.text = '\n'.join(['   c',
+                                             '   |',
+                                             '   @'])
+
+    def draw(self):
+        self.text.draw()
+
 class Map(object):
     pass
 
 
+dodopult = Dodopult()
 
-me_text = pyglet.text.document.UnformattedDocument('\n\nu--@')
-me_text.set_style(0, len(me_text.text), {
-            'font_name': 'Andale Mono',
-            'font_size': 20,
-            'color': (255, 255, 255, 255)
-        })
-
-me = pyglet.text.layout.TextLayout(me_text, 200, 200, multiline=True)
-me.loaded = True
-me.x = 500
-me.y = 100
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
@@ -41,35 +69,17 @@ window.push_handlers(pyglet.window.event.WindowEventLogger())
 @window.event
 def on_text_motion(motion):
     if motion == key.LEFT:
-        me.x -= 16
+        dodopult.text.x -= 16
     elif motion == key.RIGHT:
-        me.x += 16
+        dodopult.text.x += 16
 
 @window.event
 def on_key_press(symbol, modifiers):
      if symbol == key.SPACE:
-         me.loaded = False
-         me_text.text = '\n'.join(['   c',
-                                   '   |',
-                                   '   @'])
+         dodopult.fire()
 
-reload_delay = 2
-time_loading = 0
-def update(dt):
-    global reload_delay
-    global time_loading
-    if not me.loaded:
-        time_loading += dt
-        if 1 < time_loading < reload_delay:
-            me_text.text = '\n'.join([' c  ',
-                                      '  \ ',
-                                      '   @'])
-        if time_loading > reload_delay:
-            time_loading = 0
-            me.loaded = True
-            me_text.text = '\n\nu--@'
 
-pyglet.clock.schedule_interval(update, 0.1)
+pyglet.clock.schedule_interval(dodopult.update, 0.1)
 
 
 fps_display = pyglet.clock.ClockDisplay()
@@ -82,7 +92,7 @@ def on_draw():
     fps_display.draw()
     for dodo in dodos:
         dodo.draw()
-    me.draw()
+    dodopult.draw()
 
 
 def main():
