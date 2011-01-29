@@ -96,9 +96,16 @@ class Dodopult(object):
 
 
 class Map(object):
-    pass
+
+    def __init__(self):
+        self.lines = reversed(open('map.txt').readlines())
+
+    def draw(self):
+        pass
 
 
+
+game_map = Map()
 dodopult = Dodopult()
 
 
@@ -134,6 +141,7 @@ def on_draw():
     for dodo in dodos:
         dodo.draw()
     dodopult.draw()
+    game_map.draw()
 
 
 def main():
