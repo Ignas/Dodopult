@@ -111,3 +111,18 @@ def test_collision_detection_4():
     assert_equals(dodo.dx, 0)
     assert_equals(dodo.dy, 0)
 
+
+def test_collision_detection_5():
+    # extracted from a real crash
+    dodo = Dodo(FakeGame(FakeMap(ground_level=710, wall_x=720)))
+    dodo.x = 720.0
+    dodo.y = 495.0
+    dodo.dx = 50.0
+    dodo.dy = 50.0
+    dodo.update(1.0)
+    assert_equals(dodo.x, 720.0)
+    assert_equals(dodo.y, 495.0)
+    assert_false(dodo.is_alive)
+    assert_equals(dodo.dx, 0)
+    assert_equals(dodo.dy, 0)
+

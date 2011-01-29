@@ -66,6 +66,7 @@ class Dodo(object):
                           self.x - dx, self.y - dy, dx, dy, self.x, self.y)
                 log.debug('ground level at %.1f: %.1f', self.x, ground_level)
                 wall_x = self.game.game_map.vertical_wall_left_of(self.x)
+                log.debug('wall at %.1f', wall_x)
 
                 points = []
                 if self.y - dy >= ground_level:
@@ -76,10 +77,8 @@ class Dodo(object):
                 else:
                     x1 = y1 = None
 
-                old_ground_level = self.game.game_map.ground_level(self.x - dx)
-                if ground_level > old_ground_level:
+                if self.x - dx <= wall_x:
                     # we hit a wall from the left
-                    log.debug('wall at %.1f', wall_x)
                     # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
                     y2 = self.y - dy + (wall_x - self.x + dx) * dy / dx
                     x2 = wall_x
