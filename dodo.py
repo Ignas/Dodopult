@@ -1,11 +1,15 @@
 #!/usr/bin/env python
-import pyglet
 import random
+import math
+import pyglet
 from pyglet.window import key
+
 
 window = pyglet.window.Window(width=1024, height=600)
 font = dict(font_name='Andale Mono',
             font_size=20)
+
+
 
 class Dodo(object):
 
@@ -43,13 +47,29 @@ class Dodo(object):
 
     def update(self, dt):
         if self.dx:
-            self.label.x += self.dx / dt
-            self.label.y += self.dy / dt
-            self.dy -= self.gravity / dt
+            dx, dy = self.dx / dt, self.dy / dt
+            self.label.x += dx
+            self.label.y += dy
             ground_level = game_map.ground_level(self.label.x)
             if self.label.y < ground_level:
-                self.label.y = ground_level
+                # scale (dx, dy) -> (ndx, ndy) so old_y + ndy == ground_level
+                ndy = ground_level - self.label.y + dy
+                ndx = ndy * dx / dy
+                # but what if we hit a vertical wall?
+                old_ground_level = game_map.ground_level(self.label.x - dx)
+                if ground_level > old_ground_level:
+                    wall_x = game_map.vertical_wall_left_of(self.label.x) - 7
+                    # scale (dx, dy) -> (ndx2, ndy2) so old_x + ndx = wall_x
+                    ndx2 = wall_x - self.label.x + dx
+                    ndy2 = ndx2 * dy / dx
+                    # now see which vector is shorter
+                    if math.hypot(ndx2, ndy2) < math.hypot(ndx, ndy):
+                        ndx, ndy = ndx2, ndy2
+                self.label.x += ndx - dx
+                self.label.y += ndy - dy
                 self.dx = self.dy = 0
+            else:
+                self.dy -= self.gravity / dt
 
 
 class Dodopult(object):
@@ -230,6 +250,14 @@ class Map(object):
 
     def draw(self):
         self.text.draw()
+
+    def vertical_wall_left_of(self, x):
+        col = int(x / self.tile_width)
+        gl = self.ground_level(x)
+        while x > 0 and self.ground_level(x) >= gl:
+            col -= 1
+            x -= self.tile_width
+        return (col + 1) * self.tile_width
 
     def ground_level(self, x):
         col = int(x / self.tile_width)
