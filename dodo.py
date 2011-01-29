@@ -168,7 +168,7 @@ class Map(object):
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
                     'font_size': 100,
-                    'color': (255, 255, 255, 255),
+                    'color': (255, 255, 255, 128),
                     'line_spacing': 70
                 })
         self.text = pyglet.text.layout.TextLayout(doc, 5000, 5000, multiline=True)
