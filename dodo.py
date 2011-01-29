@@ -430,10 +430,13 @@ class Sea(object):
 
 window.push_handlers(pyglet.window.event.WindowEventLogger())
 
+
 class Game(object):
 
     dodo_sprite = load_image('dodo.png')
     dead_dodo_sprite = load_image('deado.png')
+
+    INITIAL_DODOS = 20
 
     def __init__(self):
         self.game_map = Map(self)
@@ -451,16 +454,20 @@ class Game(object):
 
         self.dodopult = Dodopult(self)
         self.dodopult.x = random.randrange(x1, x2)
-        self.dodopult.y = self.game_map.ground_level(self.dodopult.x)
+        self.dodopult.y = ground
         pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
 
         self.sea = Sea()
         self.sky = Sky(self)
         pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
 
-        self.dodos = [Dodo(self) for n in range(5)]
-        for dodo in self.dodos:
+        self.dodos = []
+        for dodo in range(self.INITIAL_DODOS):
+            dodo = Dodo(self)
+            dodo.x = random.randrange(x1, x2)
+            dodo.y = ground
             pyglet.clock.schedule_interval(dodo.update, 1 / 60.0)
+            self.dodos.append(dodo)
 
         self.camera = Camera(self)
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
