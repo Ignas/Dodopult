@@ -152,7 +152,7 @@ class Dodopult(object):
         self.text.document.text = sprite
 
     def update(self, dt):
-        self.power_bar.document.text = ' \n' * int(self.max_power - self.power) +  '*\n' * (self.power + 1)
+        self.power_bar.document.text = ' \n' * int(self.max_power - self.power) +  '*\n' * int(self.power + 1)
         if self.powering_up:
             self.power = min(self.power + 1, self.max_power)
         if not self.armed:
