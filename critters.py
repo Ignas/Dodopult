@@ -61,6 +61,7 @@ class Dodo(object):
         self.is_alive = False
 
     def update(self, dt):
+        dt = dt * 3
         if self.dx or self.dy:
             dx, dy = self.dx * dt, self.dy * dt
             self.x += dx
