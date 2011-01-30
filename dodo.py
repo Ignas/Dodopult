@@ -640,6 +640,18 @@ class Sea(object):
             self.game.next_level()
 
 
+class Help(object):
+
+    def __init__(self):
+        self.help = pyglet.sprite.Sprite(load_image('halp.png'))
+        self.help.image.anchor_x = self.help.image.width // 2
+        self.help.image.anchor_y = self.help.image.height // 2
+
+    def draw(self):
+        self.help.x = window.width // 2
+        self.help.y = window.height // 2
+        self.help.draw()
+
 
 class Game(object):
 
@@ -675,6 +687,8 @@ class Game(object):
         self.dodo_batch = pyglet.graphics.Batch()
         for dodo in range(self.INITIAL_DODOS):
             self.add_dodo()
+
+        self.help = Help()
 
         self.camera = Camera(self)
         pyglet.clock.schedule_interval(self.camera.update, self.update_freq)
@@ -751,6 +765,7 @@ class Game(object):
                 self.dodopult.draw()
                 self.sea.draw()
                 self.powerbar.draw()
+        self.help.draw()
 
 
 class Main(object):
@@ -787,6 +802,11 @@ class Main(object):
             self.game.dodopult.aim_down()
 
     def on_key_press(self, symbol, modifiers):
+        if symbol == key.F1:
+            self.game.help.help.visible = True
+        elif symbol != key.F:
+            self.game.help.help.visible = False
+
         if symbol == key.SPACE:
             self.game.dodopult.start_powering_up()
         if symbol in (key.LALT, key.RALT, key.Z):
