@@ -25,8 +25,11 @@ pyglet.resource.path = ['assets']
 pyglet.resource.reindex()
 
 
-def load_image(filename):
-    return pyglet.resource.image(filename)
+def load_image(filename, **kw):
+    img = pyglet.resource.image(filename)
+    for k, v in kw.items():
+        setattr(img, k, v)
+    return img
 
 
 @contextmanager
@@ -49,11 +52,6 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 class Dodo(object):
 
-    standing_images = [load_image('Dodo.png'),
-                       load_image('Dodo_flipped.png')]
-    for img in standing_images:
-        img.anchor_y = 12
-
     ready_image = load_image('Dodo_ready_for_launch.png')
     ready_image.anchor_x = 17
     ready_image.anchor_y = 13
@@ -64,8 +62,21 @@ class Dodo(object):
     SPRITE_SCALE = 0.7
 
     def __init__(self, game):
+
+        self.standing_images = [
+            pyglet.image.Animation.from_image_sequence([
+                    load_image('Dodo.png', anchor_y=12),
+                    load_image('Dodo2.png', anchor_y=12),
+                    ], random.uniform(0.5, 2)),
+            pyglet.image.Animation.from_image_sequence([
+                    load_image('Dodo_flipped.png', anchor_y=12),
+                    load_image('Dodo_flipped2.png', anchor_y=12),
+                    ], random.uniform(0.5, 2)),
+        ]
+
         self.game = game
         self.standing_image = random.choice(self.standing_images)
+        self.standing_image.rotation = 0.2
         self.sprite = pyglet.sprite.Sprite(self.standing_image,
                                            batch=game.dodo_batch)
         self.sprite.scale = self.SPRITE_SCALE
