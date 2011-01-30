@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import math
+import os.path
 import random
 import logging
 import itertools
@@ -798,12 +799,8 @@ def main():
     window.set_minimum_size(320, 200) # does not work on linux with compiz
     window.maximize()
     window.set_mouse_visible(True)
-    try:
-        # Breaks on Windows
-        window.set_icon(load_image('Dodo.png'))
-    except:
-        pass
-
+    window.set_icon(pyglet.image.load(os.path.join(pyglet.resource.location('Dodo.png').path,
+                                                   'Dodo.png')))
     app = Main()
     app.run()
 

@@ -10,7 +10,7 @@ cfg = {
     'url': '',
 
     'py2exe.target': '',
-#    'py2exe.icon': 'icon.ico', #64x64
+    'py2exe.icon': 'assets\\Dodo.ico', #64x64
     'py2exe.binary': APP_NAME, #leave off the .exe, it will be added
     }
 
@@ -95,7 +95,7 @@ if cmd in ('py2exe',):
             }},
         windows=[{
             'script': dest,
-            #'icon_resources': [(1, cfg['py2exe.icon'])],
+            'icon_resources': [(0, 'assets\\Dodo.ico')],
             }],
         )
 
