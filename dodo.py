@@ -349,6 +349,11 @@ class Level(object):
 
 class Map(object):
 
+    solid = load_image('Earth_1.png')
+    grass_on_top = load_image('Earth_2.png')
+    cliff_on_left = load_image('Earth_3_side.png')
+    cliff_on_left_and_grass_on_top = load_image('Earth_4_side_corner.png')
+
     GRASS_HEIGHT = 10
 
     def __init__(self, game):
@@ -362,19 +367,32 @@ class Map(object):
         self.map_width = max(map(len, self.lines)) * self.tile_width
         self.map_height = len(self.lines) * self.tile_height
 
-        self.images = {'#': load_image('Earth_1.png'),
-                       '_': load_image('Earth_2.png')}
         self.background_batch = pyglet.graphics.Batch()
         self.sprites = []
-        for map_y, (line, next_line) in enumerate(zip(self.lines, self.lines[1:])):
+        for map_y, line in enumerate(self.lines):
+            try:
+                above = self.lines[map_y + 1]
+            except IndexError:
+                above = ''
             for map_x, slot in enumerate(line):
                 if slot == ' ':
                     continue
-                image = self.images[slot]
-                if slot == '#' and (len(next_line) <= map_x or next_line[map_x] == ' '):
-                    image = self.images['_']
+
+                air_above = map_x >= len(above) or above[map_x] == ' '
+                air_to_the_left = map_x > 0 and line[map_x - 1] == ' '
+
+                if air_above and air_to_the_left:
+                    image = self.cliff_on_left_and_grass_on_top
+                elif air_above:
+                    image = self.grass_on_top
+                elif air_to_the_left:
+                    image = self.cliff_on_left
+                else:
+                    image = self.solid
+
                 s = pyglet.sprite.Sprite(image,
-                                         map_x * 100, map_y * 100,
+                                         map_x * self.tile_width,
+                                         map_y * self.tile_height,
                                          batch=self.background_batch)
                 # we need to keep these objects alive, or they're GCed
                 self.sprites.append(s)
