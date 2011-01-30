@@ -64,6 +64,7 @@ class Dodo(object):
         self.dx = 0
         self.dy = 0
         self.is_alive = True
+        self.player = pyglet.media.Player()
 
     def draw(self):
         self.sprite.draw()
@@ -93,10 +94,18 @@ class Dodo(object):
         self.dy = dy
         self.game.camera.focus_on(self)
 
+    def drown(self):
+        self.sprite.visible = False # sank below the water, so there!
+        self.is_alive = False
+        self.game.camera.remove_focus(self)
+
     def go_extinct(self):
         self.sprite.image = self.dead_image
         self.is_alive = False
         self.game.camera.remove_focus(self)
+        self.player.queue(pyglet.resource.media('dodo_splat.wav', streaming=False))
+        self.player.seek(0.3)
+        self.player.play()
 
     def survive(self):
         if self.is_alive:
@@ -281,6 +290,7 @@ class Dodopult(object):
                 self.payload.y = self.y + self.LAUNCH_POS[1]
                 self.payload.launch(*self.aim_vector(self.power))
             self.player.next()
+            self.player = pyglet.media.Player()
             self.player.queue(pyglet.resource.media('catapult_fire.wav', streaming=False))
             self.player.play()
             self.power = self.min_power
@@ -676,7 +686,7 @@ class Game(object):
                     above += 1
                 elif dodo.y == self.current_level.height:
                     here += 1
-        if self.game.dodopult.payload:
+        if self.dodopult.payload:
             here += 1
             above -= 1
         if here == 0 and above > 0:
@@ -689,8 +699,7 @@ class Game(object):
     def next_level(self):
         for dodo in self.dodos:
             if dodo.is_alive and dodo.y < self.sea.level:
-                dodo.go_extinct()
-                dodo.sprite.visible = False # sank below the water, so there!
+                dodo.drown()
         if (self.current_level.next is None or
             self.current_level.next.next is None):
             self.game_over()
