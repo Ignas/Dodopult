@@ -366,15 +366,14 @@ class Map(object):
         self.map_width = max(map(len, self.lines)) * self.tile_width
         self.map_height = len(self.lines) * self.tile_height
 
-        self.texture = pyglet.image.TextureGrid(
-                        pyglet.image.ImageGrid(load_image('map.png'), 3, 1))
         self.images = {'#': load_image('Earth_1.png'),
-                       '_': self.texture[1],
-                       ' ': self.texture[2]}
+                       '_': load_image('Earth_2.png')}
         self.background_batch = pyglet.graphics.Batch()
         self.sprites = []
         for map_y, (line, next_line) in enumerate(zip(self.lines, self.lines[1:])):
             for map_x, slot in enumerate(line):
+                if slot == ' ':
+                    continue
                 image = self.images[slot]
                 if slot == '#' and (len(next_line) <= map_x or next_line[map_x] == ' '):
                     image = self.images['_']
