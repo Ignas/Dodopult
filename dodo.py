@@ -11,6 +11,8 @@ from pyglet import gl
 
 
 log = logging.getLogger('dodo')
+log.setLevel(logging.DEBUG)
+log.addHandler(logging.StreamHandler())
 
 
 pyglet.resource.path = ['assets']
@@ -707,6 +709,10 @@ class Main(object):
         window.event(self.on_key_release)
         window.event(self.on_resize)
 
+        self.fps_display = pyglet.clock.ClockDisplay()
+        self.fps_display.label.y = window.height - 50
+        self.fps_display.label.x = window.width - 170
+
     def on_draw(self):
         window.clear()
         self.game.draw()
@@ -760,23 +766,12 @@ class Main(object):
             self.fps_display.label.y = window.height - 50
             self.fps_display.label.x = window.width - 170
 
-    def debug_on(self):
-        log.setLevel(logging.DEBUG)
-        log.addHandler(logging.StreamHandler())
-
-        window.push_handlers(pyglet.window.event.WindowEventLogger())
-
-        self.fps_display = pyglet.clock.ClockDisplay()
-        self.fps_display.label.y = window.height - 50
-        self.fps_display.label.x = window.width - 170
-
     def run(self):
         pyglet.app.run()
 
 
 def main():
     app = Main()
-    app.debug_on()
     app.run()
 
 
