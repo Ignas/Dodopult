@@ -236,9 +236,7 @@ class Dodopult(object):
         self.time_loading = 0
         self.power = self.min_power
         self.powering_up = False
-
-        self.power_up = pyglet.media.Player()
-        self.release = pyglet.media.Player()
+        self.player = pyglet.media.Player()
 
     @property
     def x(self):
@@ -282,9 +280,9 @@ class Dodopult(object):
                 self.payload.x = self.x + self.LAUNCH_POS[0]
                 self.payload.y = self.y + self.LAUNCH_POS[1]
                 self.payload.launch(*self.aim_vector(self.power))
-            self.power_up.next()
-            self.release.queue(pyglet.resource.media('catapult_fire.wav', streaming=False))
-            self.release.play()
+            self.player.next()
+            self.player.queue(pyglet.resource.media('catapult_fire.wav', streaming=False))
+            self.player.play()
             self.power = self.min_power
             self.powering_up = False
             self.armed = False
@@ -294,8 +292,8 @@ class Dodopult(object):
     def start_powering_up(self):
         if self.armed:
             self.powering_up = True
-            self.power_up.queue(pyglet.resource.media('power_up.wav', streaming=False))
-            self.power_up.play()
+            self.player.queue(pyglet.resource.media('power_up.wav', streaming=False))
+            self.player.play()
 
     def draw(self):
         self.sprite.draw()
