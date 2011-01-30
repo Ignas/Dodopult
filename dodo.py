@@ -196,7 +196,7 @@ class Dodopult(object):
 
     min_power = 200.0         # pixels per second
     max_power = 1000.0        # pixels per second
-    power_increase = 200.0    # pixels per second per second
+    power_increase = 400.0    # pixels per second per second
 
     aim_angle = 45
     min_aim_angle = 15
