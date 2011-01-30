@@ -23,7 +23,6 @@ def load_image(filename):
     return pyglet.resource.image(filename)
 
 
-
 @contextmanager
 def gl_matrix():
     gl.glPushMatrix()
@@ -790,7 +789,11 @@ def main():
     window.set_minimum_size(320, 200) # does not work on linux with compiz
     window.maximize()
     window.set_mouse_visible(True)
-    window.set_icon(load_image('Dodo.png'))
+    try:
+        # Breaks on Windows
+        window.set_icon(load_image('Dodo.png'))
+    except:
+        pass
 
     app = Main()
     app.run()
