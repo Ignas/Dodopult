@@ -177,13 +177,21 @@ class PowerBar(object):
                                 load_image('power_bar.png'),
                                 self.steps, 1))
         self.power_bar = pyglet.sprite.Sprite(self.textures[0], 20, 20)
-        self.power_bar.scale = 2.0
 
     def draw(self):
+        if not self.dodopult.payload:
+            return
+
         range = float(self.dodopult.max_power - self.dodopult.min_power)
         power = (self.dodopult.power - self.dodopult.min_power) / range
         n = self.steps - int(power * (self.steps - 1)) - 1
         self.power_bar.image = self.textures[n]
+        self.power_bar.rotation = -self.dodopult.aim_angle
+
+        x = self.dodopult.payload.x + 5
+        y = self.dodopult.payload.y
+        dx, dy = self.dodopult.aim_vector(self.dodopult.AIM_R)
+        self.power_bar.set_position(x + dx, y + dy)
         self.power_bar.draw()
 
 
@@ -287,20 +295,6 @@ class Dodopult(object):
 
     def draw(self):
         self.sprite.draw()
-        if self.payload:
-            x, y = self.payload.x + 5, self.payload.y
-            dx1, dy1 = self.aim_vector(self.AIM_R)
-            dx2, dy2 = self.aim_vector(self.AIM_R + self.power * self.AIM_SIZE)
-            x1, y1 = x + dx1, y + dy1
-            x2, y2 = x + dx2, y + dy2
-            with gl_state():
-                # Not sure which bit is being clobbered by this drawing
-                # op, but if I don't save it, the sky disappears when on
-                # Windows.
-                pyglet.graphics.draw(2, gl.GL_LINES,
-                    ('v2f', (x1, y1, x2, y2)),
-                    ('c3B', (0, 0, 0, 0, 0, 0)),
-                )
 
     def move_left(self):
         self.x = max(self.game.current_level.left + self.MARGIN_LEFT, self.x - 15)
@@ -698,7 +692,7 @@ class Game(object):
                 self.dodo_batch.draw()
                 self.dodopult.draw()
                 self.sea.draw()
-        self.powerbar.draw()
+                self.powerbar.draw()
 
 
 class Main(object):
