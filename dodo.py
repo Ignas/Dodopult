@@ -662,8 +662,12 @@ class Main(object):
         if symbol in (key.LALT, key.RALT, key.Z):
             self.game.dodopult.try_load()
         # DEBUG/CHEAT CODES
-        if symbol == key.PLUS:
-            self.game.sea.level += 10
+        if symbol == key.ASCIITILDE:
+            g = self.game
+            g.sea.level = max(g.sea.level + 10,
+                              g.current_level.height - window.height // 2)
+        if symbol == key.SLASH:
+            del self.game.dodos[::2]
         if symbol == key.N:
             self.game.next_level()
 
