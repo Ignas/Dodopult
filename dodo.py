@@ -212,7 +212,7 @@ class Dodopult(object):
         self.power = self.min_power
         self.powering_up = False
 
-        doc = pyglet.text.document.UnformattedDocument('*\n' * 21)
+        doc = pyglet.text.document.UnformattedDocument(' \n' * 21)
         doc.set_style(0, len(doc.text), {
                     'font_name': 'Andale Mono',
                     'font_size': 20,
