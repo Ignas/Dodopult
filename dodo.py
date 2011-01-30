@@ -593,6 +593,11 @@ class Sea(object):
         self.first_layer = []
         self.level = 250
 
+        self.player = pyglet.media.Player()
+        self.player.queue(pyglet.resource.media('sea.wav', streaming=False))
+        self.player.eos_action = self.player.EOS_LOOP
+        self.player.volume = 0.2
+        self.player.play()
         max_throw_distance = game.dodopult.max_power ** 2 / game.gravity
         w = self.game.game_map.map_width + window.width + max_throw_distance
 
