@@ -352,6 +352,7 @@ class Map(object):
     grass_on_top = load_image('Earth_2.png')
     cliff_on_left = load_image('Earth_3_side.png')
     cliff_on_left_and_grass_on_top = load_image('Earth_4_side_corner.png')
+    inner_cliff_corner = load_image('Earth_5_inner_corner.png')
 
     GRASS_HEIGHT = 10
 
@@ -379,6 +380,9 @@ class Map(object):
 
                 air_above = map_x >= len(above) or above[map_x] == ' '
                 air_to_the_left = map_x > 0 and line[map_x - 1] == ' '
+                air_above_to_the_left = (map_x - 1 >= len(above)
+                                         or map_x == 0
+                                         or above[map_x - 1] == ' ')
 
                 if air_above and air_to_the_left:
                     image = self.cliff_on_left_and_grass_on_top
@@ -386,6 +390,8 @@ class Map(object):
                     image = self.grass_on_top
                 elif air_to_the_left:
                     image = self.cliff_on_left
+                elif air_above_to_the_left:
+                    image = self.inner_cliff_corner
                 else:
                     image = self.solid
 
