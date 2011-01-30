@@ -153,7 +153,7 @@ class Dodo(object):
                     self.y = y1
                     self.survive()
                 self.dx = self.dy = 0
-                self.game.count_surviving_dodos()
+                pyglet.clock.schedule_once(self.game.count_surviving_dodos, 3.0)
             else:
                 self.dy -= self.game.gravity * dt
                 self.dx *= (1 - self.game.air_resistance)
@@ -672,6 +672,9 @@ class Game(object):
         if here == 0 and above > 0:
             log.debug("Going to next level with %d live dodos", above)
             self.next_level()
+        elif here == 0 and above == 0:
+            log.debug("No more dodos left.")
+            self.game_over()
 
     def next_level(self):
         for dodo in self.dodos:
@@ -683,6 +686,7 @@ class Game(object):
             self.game_over()
         else:
             self.current_level = self.current_level.next
+            log.debug("Level %d", self.current_level.number)
             self.current_level.place(self.dodopult)
             pyglet.clock.schedule_once(self.count_surviving_dodos, 3.0)
 
