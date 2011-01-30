@@ -161,7 +161,7 @@ class Dodo(object):
                 self.game.count_surviving_dodos()
             else:
                 self.dy -= self.game.gravity * dt
-                self.dx *= (1 - 0.007)
+                self.dx *= (1 - self.game.air_resistance)
 
 
 class Dodopult(object):
@@ -345,7 +345,7 @@ class Level(object):
         self.next = next
 
     def random_x(self):
-        x1 = min(self.left + 20, self.right)
+        x1 = min(self.left, self.right)
         x2 = max(x1, self.right - Dodopult.MARGIN_RIGHT)
         return random.randint(x1, x2)
 
@@ -529,8 +529,11 @@ class Sea(object):
         self.image = image = load_image('zea.png')
         self.first_layer = []
         self.level = 250
-        for x in xrange(0, self.game.game_map.map_width + window.width,
-                        image.width):
+
+        max_throw_distance = game.dodopult.max_power ** 2 / game.gravity
+        w = self.game.game_map.map_width + window.width + max_throw_distance
+
+        for x in xrange(0, w, image.width):
             s = pyglet.sprite.Sprite(image, x, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
@@ -568,6 +571,8 @@ class Sea(object):
 class Game(object):
 
     gravity = 200.0 # pixels per second squared
+    air_resistance = 0.007 # i.e. a loss of 0.7% per seco^W per update
+                           # XXX fix this to be per second
 
     INITIAL_DODOS = 20
 
