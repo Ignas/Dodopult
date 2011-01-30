@@ -562,7 +562,7 @@ class Sea(object):
     def __init__(self, game):
         self.game = game
         self.batch = pyglet.graphics.Batch()
-        self.image = image = load_image('zea.png')
+        self.image = image = load_image('Wave.png')
         self.first_layer = []
         self.level = 250
 
