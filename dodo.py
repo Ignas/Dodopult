@@ -89,8 +89,6 @@ class Dodo(object):
     def y(self, y):
         self.sprite.y = y
 
-    gravity = 200.0
-
     def launch(self, dx, dy):
         self.dx = dx
         self.dy = dy
@@ -162,7 +160,7 @@ class Dodo(object):
                 self.dx = self.dy = 0
                 self.game.count_surviving_dodos()
             else:
-                self.dy -= self.gravity * dt
+                self.dy -= self.game.gravity * dt
                 self.dx *= (1 - 0.007)
 
 
@@ -558,6 +556,8 @@ class Sea(object):
 
 
 class Game(object):
+
+    gravity = 200.0 # pixels per second squared
 
     INITIAL_DODOS = 20
 
