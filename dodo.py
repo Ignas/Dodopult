@@ -50,24 +50,23 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 class Dodo(object):
 
-    dodo_sprite = load_image('Dodo.png')
-    dodo_ready_sprite = load_image('Dodo_ready_for_launch.png')
-    dead_dodo_sprite = load_image('deado.png')
+    standing_image = load_image('Dodo.png')
+    standing_image.anchor_y = 12
+
+    ready_image = load_image('Dodo_ready_for_launch.png')
+    ready_image.anchor_x = 17
+    ready_image.anchor_y = 13
+
+    dead_image = load_image('deado.png')
+    dead_image.anchor_x = 19
 
     SPRITE_SCALE = 0.7
 
     def __init__(self, game):
         self.game = game
-        self.standing_sprite = pyglet.sprite.Sprite(self.dodo_sprite)
-        self.standing_sprite.scale = self.SPRITE_SCALE
-        self.standing_sprite.image.anchor_y = 12 + random.randint(-1, 1)
-        self.ready_sprite = pyglet.sprite.Sprite(self.dodo_ready_sprite)
-        self.ready_sprite.scale = self.SPRITE_SCALE
-        self.ready_sprite.image.anchor_x = 17
-        self.ready_sprite.image.anchor_y = 13
-        self.dead_sprite = pyglet.sprite.Sprite(self.dead_dodo_sprite)
-        self.dead_sprite.image.anchor_x = 19
-        self.sprite = self.standing_sprite
+        self.sprite = pyglet.sprite.Sprite(self.standing_image,
+                                           batch=game.dodo_batch)
+        self.sprite.scale = self.SPRITE_SCALE
         self.dx = 0
         self.dy = 0
         self.is_alive = True
@@ -101,17 +100,13 @@ class Dodo(object):
         self.game.camera.focus_on(self)
 
     def go_extinct(self):
-        self.dead_sprite.x = self.x
-        self.dead_sprite.y = self.y
-        self.sprite = self.dead_sprite
+        self.sprite.image = self.dead_image
         self.is_alive = False
         self.game.camera.remove_focus(self)
 
     def survive(self):
         if self.is_alive:
-            self.standing_sprite.x = self.x
-            self.standing_sprite.y = self.y
-            self.sprite = self.standing_sprite
+            self.sprite.image = self.standing_image
         self.game.camera.remove_focus(self)
 
     def update(self, dt):
@@ -343,7 +338,7 @@ class Dodopult(object):
             if (self.x + self.PICKUP_RANGE[0] <= dodo.x <= self.x + self.PICKUP_RANGE[1]
                 and not dodo.in_flight and dodo.is_alive):
                 self.payload = dodo
-                self.payload.sprite = self.payload.ready_sprite
+                dodo.sprite.image = dodo.ready_image
                 self.x = self.x # trigger payload placement
                 self.y = self.y # trigger payload placement
                 self.set_sprite(self.loaded_sprite)
@@ -639,6 +634,7 @@ class Game(object):
         self.clouds = Clouds(self)
 
         self.dodos = []
+        self.dodo_batch = pyglet.graphics.Batch()
         for dodo in range(self.INITIAL_DODOS):
             self.add_dodo()
 
@@ -704,8 +700,7 @@ class Game(object):
             self.game_map.draw()
             with gl_matrix():
                 gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
-                for dodo in self.dodos:
-                    dodo.draw()
+                self.dodo_batch.draw()
                 self.dodopult.draw()
                 self.sea.draw()
         self.powerbar.draw()
