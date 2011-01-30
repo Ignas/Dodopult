@@ -49,8 +49,10 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 class Dodo(object):
 
-    standing_image = load_image('Dodo.png')
-    standing_image.anchor_y = 12
+    standing_images = [load_image('Dodo.png'),
+                       load_image('Dodo_flipped.png')]
+    for img in standing_images:
+        img.anchor_y = 12
 
     ready_image = load_image('Dodo_ready_for_launch.png')
     ready_image.anchor_x = 17
@@ -63,6 +65,7 @@ class Dodo(object):
 
     def __init__(self, game):
         self.game = game
+        self.standing_image = random.choice(self.standing_images)
         self.sprite = pyglet.sprite.Sprite(self.standing_image,
                                            batch=game.dodo_batch)
         self.sprite.scale = self.SPRITE_SCALE
