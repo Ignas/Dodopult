@@ -608,6 +608,7 @@ class Game(object):
     def __init__(self):
         self.game_map = Map(self)
         self.current_level = self.game_map.levels[0]
+        self.game_is_over = False
 
         self.dodopult = Dodopult(self)
         self.current_level.place(self.dodopult)
@@ -663,11 +664,17 @@ class Game(object):
         bunny.x = (lvl.left + lvl.right) / 2
         bunny.y = lvl.height - self.game_map.tile_height * 6.5
         self.camera.focus_on(bunny)
+        self.game_is_over = True
 
     def draw(self):
         self.sky.draw()
         self.clouds.draw()
-        self.game_map.draw()
+        with gl_matrix():
+            if self.game_is_over:
+                gl.glTranslatef(window.width / 2, window.height // 2, 0)
+                gl.glScalef(1 / 8., 1 / 8., 1.0)
+                gl.glTranslatef(-window.width / 2, -window.height // 2, 0)
+            self.game_map.draw()
         with gl_matrix():
             gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
             for dodo in self.dodos:
@@ -723,6 +730,8 @@ class Main(object):
             self.game.add_dodo()
         if symbol == key.N:
             self.game.next_level()
+        if symbol == key.G:
+            self.game.game_over()
 
     def on_key_release(self, symbol, modifiers):
         if symbol == key.SPACE:
