@@ -44,18 +44,22 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 class Dodo(object):
 
+    dodo_sprite = load_image('Dodo.png')
+    dodo_ready_sprite = load_image('Dodo_ready_for_launch.png')
+    dead_dodo_sprite = load_image('deado.png')
+
     SPRITE_SCALE = 0.7
 
     def __init__(self, game):
         self.game = game
-        self.standing_sprite = pyglet.sprite.Sprite(game.dodo_sprite)
+        self.standing_sprite = pyglet.sprite.Sprite(self.dodo_sprite)
         self.standing_sprite.scale = self.SPRITE_SCALE
         self.standing_sprite.image.anchor_y = 12 + random.randint(-1, 1)
-        self.ready_sprite = pyglet.sprite.Sprite(game.dodo_ready_sprite)
+        self.ready_sprite = pyglet.sprite.Sprite(self.dodo_ready_sprite)
         self.ready_sprite.scale = self.SPRITE_SCALE
         self.ready_sprite.image.anchor_x = 17
         self.ready_sprite.image.anchor_y = 13
-        self.dead_sprite = pyglet.sprite.Sprite(game.dead_dodo_sprite)
+        self.dead_sprite = pyglet.sprite.Sprite(self.dead_dodo_sprite)
         self.dead_sprite.image.anchor_x = 19
         self.sprite = self.standing_sprite
         self.dx = 0
@@ -538,10 +542,6 @@ class Sea(object):
 
 
 class Game(object):
-
-    dodo_sprite = load_image('Dodo.png')
-    dodo_ready_sprite = load_image('Dodo_ready_for_launch.png')
-    dead_dodo_sprite = load_image('deado.png')
 
     INITIAL_DODOS = 20
 

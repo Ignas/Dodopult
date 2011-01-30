@@ -67,10 +67,6 @@ class FakeMap(object):
 
 class FakeGame(object):
 
-    dodo_sprite = FakePygletImage()
-    dead_dodo_sprite = FakePygletImage()
-    dodo_ready_sprite = FakePygletImage()
-
     def __init__(self, game_map):
         self.game_map = game_map
 
