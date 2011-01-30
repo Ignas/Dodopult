@@ -533,20 +533,23 @@ class Sky(object):
 
 class Clouds(object):
 
+    images = ([load_image('Cloud_1.png')] * 10 +
+              [load_image('Cloud_2.png')] + # rainbows are rare
+              [load_image('Cloud_3.png')] * 10)
+
     parallax = -0.5
-    density = 1 / 400000. # 1 cloud in square mm
+    density = 1 / 200000. # 1 cloud in square mm
 
     def __init__(self, game):
         self.game = game
         self.batch = pyglet.graphics.Batch()
-        self.image = load_image('cloud.png')
         self.sprites = []
         map = game.game_map
         n = map.map_width * map.map_height * self.parallax ** 2 * self.density
         for i in range(int(n)):
             x = random.uniform(0, map.map_width * abs(self.parallax))
             y = random.uniform(0, map.map_height * abs(self.parallax))
-            s = pyglet.sprite.Sprite(self.image, x, y,
+            s = pyglet.sprite.Sprite(random.choice(self.images), x, y,
                                      batch=self.batch)
             self.sprites.append(s)
 
