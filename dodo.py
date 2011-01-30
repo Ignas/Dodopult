@@ -666,8 +666,8 @@ class Game(object):
         log.debug("Game over")
         bunny = Dodo(self)
         lvl = self.game_map.levels[-1]
-        bunny.x = (lvl.left + lvl.right) / 2
-        bunny.y = lvl.height - self.game_map.tile_height * 6.5
+        bunny.x = (lvl.left + lvl.right) / 2 + self.game_map.tile_width * 1.5
+        bunny.y = lvl.height - self.game_map.tile_height * 7
         self.camera.focus_on(bunny)
         self.game_is_over = True
 
