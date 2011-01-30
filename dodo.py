@@ -520,7 +520,8 @@ class Sea(object):
         self.image = image = load_image('zea.png')
         self.first_layer = []
         self.level = 250
-        for x in xrange(0, self.game.game_map.map_width, image.width):
+        for x in xrange(0, self.game.game_map.map_width + window.width,
+                        image.width):
             s = pyglet.sprite.Sprite(image, x, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
