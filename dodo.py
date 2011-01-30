@@ -21,7 +21,9 @@ def load_image(filename):
     return pyglet.resource.image(filename)
 
 
-window = pyglet.window.Window(width=1024, height=600)
+window = pyglet.window.Window(width=1024, height=600,
+                              caption='Save the Dodos')
+window.set_mouse_visible(False)
 
 
 @contextmanager
