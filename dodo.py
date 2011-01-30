@@ -94,18 +94,21 @@ class Dodo(object):
     def launch(self, dx, dy):
         self.dx = dx
         self.dy = dy
+        self.game.camera.focus_on(self)
 
     def go_extinct(self):
         self.dead_sprite.x = self.x
         self.dead_sprite.y = self.y
         self.sprite = self.dead_sprite
         self.is_alive = False
+        self.game.camera.remove_focus(self)
 
     def survive(self):
         if self.is_alive:
             self.standing_sprite.x = self.x
             self.standing_sprite.y = self.y
             self.sprite = self.standing_sprite
+        self.game.camera.remove_focus(self)
 
     def update(self, dt):
         dt = dt * 3
@@ -430,6 +433,7 @@ class Camera(object):
         self.y = self.game.game_map.ground_level(0) - 230
         self.target_x = self.x
         self.target_y = self.y
+        self.focus = None
 
     @property
     def center_x(self):
@@ -471,14 +475,21 @@ class Camera(object):
     def y(self, y):
         self._y = max(0, y)
 
+    def focus_on(self, obj):
+        self.focus = obj
+
+    def remove_focus(self, obj):
+        if self.focus is obj:
+            # TODO: timed delay
+            self.focus = None
+
     def update(self, dt):
         self.x = int(self.x - (self.x - self.target_x) * 0.1)
         self.y = int(self.y - (self.y - self.target_y) * 0.1)
-        for dodo in self.game.dodos:
-            if dodo.in_flight:
-                self.center_x, self.center_y = dodo.x, dodo.y
-                return
-        self.center_x, self.bottom_third_y = self.game.dodopult.x, self.game.dodopult.y
+        if self.focus:
+            self.center_x, self.center_y = self.focus.x, self.focus.y
+        else:
+            self.center_x, self.bottom_third_y = self.game.dodopult.x, self.game.dodopult.y
 
 
 class Sky(object):
