@@ -722,6 +722,7 @@ class Game(object):
     def game_over(self):
         log.debug("Game over")
         bunny = Dodo(self)
+        bunny.sprite.visible = False
         lvl = self.game_map.levels[-1]
         bunny.x = (lvl.left + lvl.right) / 2 + self.game_map.tile_width * 1.5
         bunny.y = lvl.height - self.game_map.tile_height * 7
