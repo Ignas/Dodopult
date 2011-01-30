@@ -667,20 +667,20 @@ class Game(object):
         self.game_is_over = True
 
     def draw(self):
-        self.sky.draw()
-        self.clouds.draw()
         with gl_matrix():
             if self.game_is_over:
                 gl.glTranslatef(window.width / 2, window.height // 2, 0)
                 gl.glScalef(1 / 8., 1 / 8., 1.0)
                 gl.glTranslatef(-window.width / 2, -window.height // 2, 0)
+            self.sky.draw()
+            self.clouds.draw()
             self.game_map.draw()
-        with gl_matrix():
-            gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
-            for dodo in self.dodos:
-                dodo.draw()
-            self.dodopult.draw()
-            self.sea.draw()
+            with gl_matrix():
+                gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
+                for dodo in self.dodos:
+                    dodo.draw()
+                self.dodopult.draw()
+                self.sea.draw()
 
 
 class Main(object):
@@ -729,7 +729,9 @@ class Main(object):
         if symbol == key.PLUS:
             self.game.add_dodo()
         if symbol == key.N:
-            self.game.next_level()
+            if (self.game.current_level.next is not None and
+                self.game.current_level.next.next is not None):
+                self.game.next_level()
         if symbol == key.G:
             self.game.game_over()
 
