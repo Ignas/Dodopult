@@ -467,7 +467,7 @@ class Camera(object):
 
     @center_x.setter
     def center_x(self, x):
-        self.target_x = int(x - window.height // 2)
+        self.target_x = int(x - window.width // 2)
 
     @center_y.setter
     def center_y(self, y):
