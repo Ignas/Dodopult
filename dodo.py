@@ -23,14 +23,6 @@ def load_image(filename):
     return pyglet.resource.image(filename)
 
 
-window = pyglet.window.Window(width=1024, height=600,
-                              resizable=True,
-                              caption='Save the Dodos')
-window.set_minimum_size(320, 200) # does not work on linux with compiz
-window.maximize()
-window.set_mouse_visible(True)
-window.set_icon(load_image('Dodo.png'))
-
 
 @contextmanager
 def gl_matrix():
@@ -225,6 +217,8 @@ class Dodopult(object):
 
     INITIAL_X = 500
 
+    VERT_ADJUST = 7
+
     min_power = 200.0         # pixels per second
     max_power = 1000.0        # pixels per second
     power_increase = 400.0    # pixels per second per second
@@ -255,13 +249,13 @@ class Dodopult(object):
 
     @property
     def y(self):
-        return self.sprite.y
+        return self.sprite.y + self.VERT_ADJUST
 
     @y.setter
     def y(self, y):
-        self.sprite.y = y
+        self.sprite.y = y - self.VERT_ADJUST
         if self.payload:
-            self.payload.y = y + self.PAYLOAD_POS[1]
+            self.payload.y = y + self.PAYLOAD_POS[1] - self.VERT_ADJUST
 
     def set_sprite(self, sprite):
         self.sprite.image = sprite
@@ -771,6 +765,15 @@ class Main(object):
 
 
 def main():
+    global window
+    window = pyglet.window.Window(width=1024, height=600,
+                                  resizable=True,
+                                  caption='Save the Dodos')
+    window.set_minimum_size(320, 200) # does not work on linux with compiz
+    window.maximize()
+    window.set_mouse_visible(True)
+    window.set_icon(load_image('Dodo.png'))
+
     app = Main()
     app.run()
 

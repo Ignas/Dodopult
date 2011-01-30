@@ -12,10 +12,6 @@ class FakePygletGl(object):
 class FakePygletWindow(object):
     key = None
 
-    class Window(object):
-        def __init__(self, *a, **kw):
-            pass
-
 class FakePygletImage(object):
     pass
 
@@ -65,7 +61,15 @@ class FakeMap(object):
             return 0
 
 
+class FakeCamera(object):
+    def remove_focus(self, obj):
+        pass
+
+
 class FakeGame(object):
+
+    dodo_batch = None
+    camera = FakeCamera()
 
     def __init__(self, game_map):
         self.game_map = game_map
