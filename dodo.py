@@ -614,12 +614,15 @@ class Game(object):
     air_resistance = 0.007 # i.e. a loss of 0.7% per seco^W per update
                            # XXX fix this to be per second
 
+    game_over_animation = 5.0 # seconds
+
     INITIAL_DODOS = 20
 
     def __init__(self):
         self.game_map = Map(self)
         self.current_level = self.game_map.levels[0]
         self.game_is_over = False
+        self.game_over_time = 0
 
         self.dodopult = Dodopult(self)
         self.current_level.place(self.dodopult)
@@ -628,7 +631,7 @@ class Game(object):
         self.powerbar = PowerBar(self.dodopult)
 
         self.sea = Sea(self)
-        pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
+        pyglet.clock.schedule_interval(self.sea.update, 1 / 30.0)
 
         self.sky = Sky(self)
         self.clouds = Clouds(self)
@@ -638,12 +641,14 @@ class Game(object):
             self.add_dodo()
 
         self.camera = Camera(self)
-        pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
+        pyglet.clock.schedule_interval(self.camera.update, 1 / 30.0)
+
+        pyglet.clock.schedule_interval(self.update, 1 / 30.0)
 
     def add_dodo(self):
         dodo = Dodo(self)
         self.current_level.place(dodo)
-        pyglet.clock.schedule_interval(dodo.update, 1 / 60.0)
+        pyglet.clock.schedule_interval(dodo.update, 1 / 30.0)
         self.dodos.append(dodo)
 
     def count_surviving_dodos(self):
@@ -679,11 +684,18 @@ class Game(object):
         self.camera.focus_on(bunny)
         self.game_is_over = True
 
+    def update(self, dt):
+        if self.game_is_over:
+            self.game_over_time = min(self.game_over_animation,
+                                      self.game_over_time + dt)
+
     def draw(self):
         with gl_matrix():
             if self.game_is_over:
+                t = self.game_over_time / self.game_over_animation
+                scale = 1 - t * (1 - 1/5.)
                 gl.glTranslatef(window.width / 2, window.height // 2, 0)
-                gl.glScalef(1 / 8., 1 / 8., 1.0)
+                gl.glScalef(scale, scale, 1.0)
                 gl.glTranslatef(-window.width / 2, -window.height // 2, 0)
             self.sky.draw()
             self.clouds.draw()
