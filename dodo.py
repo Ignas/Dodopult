@@ -350,9 +350,10 @@ class Dodopult(object):
             return
         if self.payload:
             # let's unload
-            self.payload.y -= self.PAYLOAD_POS[1]
-            self.payload = None
-            self.set_sprite(self.armed_sprite)
+            if self.x >= self.game.current_level.left:
+                self.payload.y -= self.PAYLOAD_POS[1]
+                self.payload = None
+                self.set_sprite(self.armed_sprite)
             return
         for dodo in self.game.dodos:
             if (self.x + self.PICKUP_RANGE[0] <= dodo.x <= self.x + self.PICKUP_RANGE[1]
