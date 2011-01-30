@@ -618,7 +618,7 @@ class Sea(object):
         self.player.volume = 0.2
         self.player.play()
         max_throw_distance = game.dodopult.max_power ** 2 / game.gravity
-        w = self.game.game_map.map_width + window.width + max_throw_distance
+        w = self.game.game_map.map_width + 3000 + max_throw_distance
 
         for x in xrange(0, int(w), image.width):
             s = pyglet.sprite.Sprite(image, x, 0,
@@ -782,25 +782,27 @@ class Game(object):
         self.help.draw()
 
 
-class Main(object):
+class Main(pyglet.window.Window):
 
     fps_display = None
 
     def __init__(self):
+        super(Main, self).__init__(width=1024, height=600,
+                                   resizable=True,
+                                   caption='Save the Dodos')
+        self.set_minimum_size(320, 200) # does not work on linux with compiz
+        self.maximize()
+        self.set_mouse_visible(True)
+        self.set_icon(pyglet.image.load(
+            os.path.join(pyglet.resource.location('Dodo.png').path, 'Dodo.png')))
         self.game = Game()
 
-        window.event(self.on_draw)
-        window.event(self.on_text_motion)
-        window.event(self.on_key_press)
-        window.event(self.on_key_release)
-        window.event(self.on_resize)
-
         self.fps_display = pyglet.clock.ClockDisplay()
-        self.fps_display.label.y = window.height - 50
-        self.fps_display.label.x = window.width - 170
+        self.fps_display.label.y = self.height - 50
+        self.fps_display.label.x = self.width - 170
 
     def on_draw(self):
-        window.clear()
+        self.clear()
         self.game.draw()
         if self.fps_display:
             self.fps_display.draw()
@@ -816,6 +818,12 @@ class Main(object):
             self.game.dodopult.aim_down()
 
     def on_key_press(self, symbol, modifiers):
+        if symbol == key.ESCAPE:
+            if self.game.help.help.visible:
+                self.game.help.help.visible = False
+            else:
+                self.dispatch_event('on_close')
+
         if symbol == key.F1:
             self.game.help.help.visible = True
         elif symbol != key.F:
@@ -826,14 +834,16 @@ class Main(object):
         if symbol in (key.LALT, key.RALT, key.Z):
             self.game.dodopult.try_load()
         if symbol == key.F:
-            window.set_fullscreen(not window.fullscreen)
+            self.set_fullscreen(not self.fullscreen)
+
         # DEBUG/CHEAT CODES
         if not DEBUG_VERSION:
             return
+
         if symbol == key.ASCIITILDE:
             g = self.game
             g.sea.level = max(g.sea.level + 10,
-                              g.current_level.height - window.height // 2)
+                              g.current_level.height - self.height // 2)
         if symbol == key.SLASH:
             # Note: leaves update() methods running, which maybe ain't bad
             # -- eradicating a dodo mid-flight won't leave the camera focus
@@ -856,8 +866,9 @@ class Main(object):
 
     def on_resize(self, width, height):
         if self.fps_display:
-            self.fps_display.label.y = window.height - 50
-            self.fps_display.label.x = window.width - 170
+            self.fps_display.label.y = self.height - 50
+            self.fps_display.label.x = self.width - 170
+        super(Main, self).on_resize(width, height)
 
     def run(self):
         pyglet.app.run()
@@ -865,16 +876,8 @@ class Main(object):
 
 def main():
     global window
-    window = pyglet.window.Window(width=1024, height=600,
-                                  resizable=True,
-                                  caption='Save the Dodos')
-    window.set_minimum_size(320, 200) # does not work on linux with compiz
-    window.maximize()
-    window.set_mouse_visible(True)
-    window.set_icon(pyglet.image.load(os.path.join(pyglet.resource.location('Dodo.png').path,
-                                                   'Dodo.png')))
-    app = Main()
-    app.run()
+    window = Main()
+    window.run()
 
 
 if __name__ == '__main__':
