@@ -1,7 +1,49 @@
-import pyglet
+import sys
+from cStringIO import StringIO
+
 from nose.tools import assert_equals, assert_true, assert_false
 
-from critters import Dodo
+
+# --- zomg stubs ---
+
+class FakePygletGl(object):
+    GL_ALL_ATTRIB_BITS = None
+
+class FakePygletWindow(object):
+    key = None
+
+    class Window(object):
+        def __init__(self, *a, **kw):
+            pass
+
+class FakePygletImage(object):
+    pass
+
+class FakePygletResource(object):
+    path = None
+
+    def image(self, filename):
+        return FakePygletImage()
+    def reindex(self):
+        pass
+
+class FakePygletSprite(object):
+    class Sprite(object):
+        def __init__(self, image, **kw):
+            self.image = image
+
+class FakePyglet(object):
+    gl = FakePygletGl()
+    window = FakePygletWindow()
+    resource = FakePygletResource()
+    sprite = FakePygletSprite()
+
+sys.modules['pyglet'] = FakePyglet()
+sys.modules['pyglet.window'] = FakePyglet.window
+
+# -- end of zomg stubs --
+
+from dodo import Dodo
 
 
 class FakeMap(object):
@@ -25,10 +67,15 @@ class FakeMap(object):
 
 class FakeGame(object):
 
+    dodo_sprite = FakePygletImage()
+    dead_dodo_sprite = FakePygletImage()
+    dodo_ready_sprite = FakePygletImage()
+
     def __init__(self, game_map):
         self.game_map = game_map
-        self.dodo_sprite = pyglet.image.create(1, 1)
-        self.dead_dodo_sprite = pyglet.image.create(1, 1)
+
+    def count_surviving_dodos(self):
+        pass
 
 
 def test_collision_detection_1():
@@ -102,14 +149,13 @@ def test_collision_detection_4():
     #    /|
     #   * |
     # ----+ ground 
-    dodo = Dodo(FakeGame(FakeMap(ground_level=100, wall_x=40)))
+    dodo = Dodo(FakeGame(FakeMap(ground_level=200, wall_x=40)))
     dodo.x = 20.0
     dodo.y = 30.0
     dodo.dx = 40.0
     dodo.dy = 50.0
     dodo.update(1.0)
-    assert_equals(dodo.x, 40.0)
-    assert_equals(dodo.y, 55.0)
+    assert_equals((dodo.x, dodo.y), (40.0, 55))
     assert_false(dodo.is_alive)
     assert_equals(dodo.dx, 0)
     assert_equals(dodo.dy, 0)

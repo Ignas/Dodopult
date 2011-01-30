@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import os
 import math
 import random
 import logging
@@ -14,8 +13,6 @@ from critters import Dodo
 
 
 log = logging.getLogger('dodo')
-log.setLevel(logging.DEBUG)
-log.addHandler(logging.StreamHandler())
 
 
 pyglet.resource.path = ['assets']
@@ -365,37 +362,6 @@ class Camera(object):
         self.center_x, self.bottom_third_y = self.game.dodopult.x, self.game.dodopult.y
 
 
-@window.event
-def on_text_motion(motion):
-    if motion == key.LEFT:
-        game.dodopult.move_left()
-    elif motion == key.RIGHT:
-        game.dodopult.move_right()
-    elif motion == key.UP:
-        game.dodopult.aim_up()
-    elif motion == key.DOWN:
-        game.dodopult.aim_down()
-
-
-@window.event
-def on_key_press(symbol, modifiers):
-    if symbol == key.SPACE:
-        game.dodopult.start_powering_up()
-    if symbol in (key.LALT, key.RALT, key.Z):
-        game.dodopult.try_load()
-    # DEBUG/CHEAT CODES
-    if symbol == key.PLUS:
-        game.sea.level += 10
-    if symbol == key.N:
-        game.next_level()
-
-
-@window.event
-def on_key_release(symbol, modifiers):
-    if symbol == key.SPACE:
-        game.dodopult.fire()
-
-
 class Sky(object):
 
     def __init__(self, game):
@@ -454,8 +420,6 @@ class Sea(object):
         if self.level >= self.game.current_level.height:
             self.game.next_level()
 
-
-window.push_handlers(pyglet.window.event.WindowEventLogger())
 
 
 class Game(object):
@@ -532,23 +496,67 @@ class Game(object):
             self.sea.draw()
 
 
-game = Game()
+class Main(object):
 
+    fps_display = None
 
-fps_display = pyglet.clock.ClockDisplay()
-fps_display.label.y = window.height - 50
-fps_display.label.x = window.width - 170
+    def __init__(self):
+        self.game = Game()
 
+        window.event(self.on_draw)
+        window.event(self.on_text_motion)
+        window.event(self.on_key_press)
+        window.event(self.on_key_release)
 
-@window.event
-def on_draw():
-    window.clear()
-    game.draw()
-    fps_display.draw()
+    def on_draw(self):
+        window.clear()
+        self.game.draw()
+        if self.fps_display:
+            self.fps_display.draw()
+
+    def on_text_motion(self, motion):
+        if motion == key.LEFT:
+            self.game.dodopult.move_left()
+        elif motion == key.RIGHT:
+            self.game.dodopult.move_right()
+        elif motion == key.UP:
+            self.game.dodopult.aim_up()
+        elif motion == key.DOWN:
+            self.game.dodopult.aim_down()
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.SPACE:
+            self.game.dodopult.start_powering_up()
+        if symbol in (key.LALT, key.RALT, key.Z):
+            self.game.dodopult.try_load()
+        # DEBUG/CHEAT CODES
+        if symbol == key.PLUS:
+            self.game.sea.level += 10
+        if symbol == key.N:
+            self.game.next_level()
+
+    def on_key_release(self, symbol, modifiers):
+        if symbol == key.SPACE:
+            self.game.dodopult.fire()
+
+    def debug_on(self):
+        log.setLevel(logging.DEBUG)
+        log.addHandler(logging.StreamHandler())
+
+        window.push_handlers(pyglet.window.event.WindowEventLogger())
+
+        self.fps_display = pyglet.clock.ClockDisplay()
+        self.fps_display.label.y = window.height - 50
+        self.fps_display.label.x = window.width - 170
+
+    def run(self):
+        pyglet.app.run()
 
 
 def main():
-    pyglet.app.run()
+    app = Main()
+    app.debug_on()
+    app.run()
 
 
 if __name__ == '__main__':
