@@ -434,6 +434,7 @@ class Camera(object):
         self.target_x = self.x
         self.target_y = self.y
         self.focus = None
+        self.focus_timer = 0
 
     @property
     def center_x(self):
@@ -477,17 +478,21 @@ class Camera(object):
 
     def focus_on(self, obj):
         self.focus = obj
+        self.focus_timer = 0
 
     def remove_focus(self, obj):
         if self.focus is obj:
-            # TODO: timed delay
-            self.focus = None
+            self.focus_timer = 1.5 # seconds
 
     def update(self, dt):
         self.x = int(self.x - (self.x - self.target_x) * 0.1)
         self.y = int(self.y - (self.y - self.target_y) * 0.1)
         if self.focus:
             self.center_x, self.center_y = self.focus.x, self.focus.y
+            if self.focus_timer > 0:
+                self.focus_timer -= dt
+                if self.focus_timer <= 0:
+                    self.focus_on(None)
         else:
             self.center_x, self.bottom_third_y = self.game.dodopult.x, self.game.dodopult.y
 
