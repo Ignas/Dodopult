@@ -706,6 +706,7 @@ class Main(object):
         window.event(self.on_text_motion)
         window.event(self.on_key_press)
         window.event(self.on_key_release)
+        window.event(self.on_resize)
 
     def on_draw(self):
         window.clear()
@@ -728,6 +729,8 @@ class Main(object):
             self.game.dodopult.start_powering_up()
         if symbol in (key.LALT, key.RALT, key.Z):
             self.game.dodopult.try_load()
+        if symbol == key.F:
+            window.set_fullscreen(not window.fullscreen)
         # DEBUG/CHEAT CODES
         if symbol == key.ASCIITILDE:
             g = self.game
@@ -750,6 +753,11 @@ class Main(object):
     def on_key_release(self, symbol, modifiers):
         if symbol == key.SPACE:
             self.game.dodopult.fire()
+
+    def on_resize(self, width, height):
+        if self.fps_display:
+            self.fps_display.label.y = window.height - 50
+            self.fps_display.label.x = window.width - 170
 
     def debug_on(self):
         log.setLevel(logging.DEBUG)
