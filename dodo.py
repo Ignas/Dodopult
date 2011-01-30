@@ -13,6 +13,7 @@ from pyglet import gl
 
 DEBUG_VERSION = False
 
+
 log = logging.getLogger('dodo')
 
 if DEBUG_VERSION:
@@ -673,6 +674,8 @@ class Help(object):
 
 class Game(object):
 
+    ending_image = load_image('Dodo_starting_screen.png')
+
     gravity = 200.0 # pixels per second squared
     air_resistance = 0.007 # i.e. a loss of 0.7% per seco^W per update
                            # XXX fix this to be per second
@@ -754,9 +757,12 @@ class Game(object):
     def game_over(self):
         log.debug("Game over")
         bunny = Dodo(self)
-        bunny.sprite.visible = False
+        self.ending_image.anchor_x = self.ending_image.width // 2
+        self.ending_image.anchor_y = self.ending_image.height // 2
+        bunny.sprite = pyglet.sprite.Sprite(self.ending_image,
+                                            batch=self.dodo_batch)
         lvl = self.game_map.levels[-1]
-        bunny.x = (lvl.left + lvl.right) / 2 + self.game_map.tile_width * 1.5
+        bunny.x = (lvl.left + lvl.right) / 2 + self.game_map.tile_width * 1.0
         bunny.y = lvl.height - self.game_map.tile_height * 7
         self.camera.focus_on(bunny)
         self.game_is_over = True
