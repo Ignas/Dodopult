@@ -648,7 +648,7 @@ class Sea(object):
 
     def update(self, dt):
         self.phase += dt * 3
-        self.level += 2 * (dt * 1.414 ** (self.game.current_level.number - 1))
+        self.level += 2 * (dt * 2.5 ** (self.game.current_level.number - 1))
         if self.game.dodopult.y < self.level:
             self.game.dodopult.y = self.level
         if self.level >= self.game.current_level.height:
