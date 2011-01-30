@@ -344,6 +344,15 @@ class Level(object):
         self.height = height
         self.next = next
 
+    def random_x(self):
+        x1 = min(self.left + 20, self.right)
+        x2 = max(x1, self.right - Dodopult.MARGIN_RIGHT)
+        return random.randint(x1, x2)
+
+    def place(self, obj):
+        obj.x = self.random_x()
+        obj.y = self.height
+
 
 class Map(object):
 
@@ -564,32 +573,29 @@ class Game(object):
 
     def __init__(self):
         self.game_map = Map(self)
-
-        self.current_level = lvl = self.game_map.levels[0]
-
-        x1 = lvl.left + 20
-        x2 = lvl.right - Dodopult.MARGIN_RIGHT
-        ground = lvl.height
+        self.current_level = self.game_map.levels[0]
 
         self.dodopult = Dodopult(self)
-        self.dodopult.x = random.randrange(x1, x2)
-        self.dodopult.y = ground
+        self.current_level.place(self.dodopult)
         pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
 
         self.sea = Sea(self)
-        self.sky = Sky(self)
         pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
+
+        self.sky = Sky(self)
 
         self.dodos = []
         for dodo in range(self.INITIAL_DODOS):
-            dodo = Dodo(self)
-            dodo.x = random.randrange(x1, x2)
-            dodo.y = ground
-            pyglet.clock.schedule_interval(dodo.update, 1 / 60.0)
-            self.dodos.append(dodo)
+            self.add_dodo()
 
         self.camera = Camera(self)
         pyglet.clock.schedule_interval(self.camera.update, 1 / 60.0)
+
+    def add_dodo(self):
+        dodo = Dodo(self)
+        self.current_level.place(dodo)
+        pyglet.clock.schedule_interval(dodo.update, 1 / 60.0)
+        self.dodos.append(dodo)
 
     def count_surviving_dodos(self):
         above = 0
@@ -612,10 +618,7 @@ class Game(object):
             log.debug("Game over")
         else:
             self.current_level = self.current_level.next
-            x1 = min(self.current_level.left + 20, self.current_level.right)
-            x2 = max(x1, self.current_level.right - Dodopult.MARGIN_RIGHT)
-            self.dodopult.x = random.randint(x1, x2)
-            self.dodopult.y = self.current_level.height
+            self.current_level.place(self.dodopult)
 
     def draw(self):
         self.sky.draw()
@@ -668,6 +671,8 @@ class Main(object):
                               g.current_level.height - window.height // 2)
         if symbol == key.SLASH:
             del self.game.dodos[::2]
+        if symbol == key.PLUS:
+            self.game.add_dodo()
         if symbol == key.N:
             self.game.next_level()
 
