@@ -10,15 +10,25 @@ class FakePygletGl(object):
 
 class FakePygletWindow(object):
     key = None
+    class Window(object):
+        def __init__(self, *a, **kw):
+            pass
 
 class FakePygletImage(object):
-    pass
+    class Image(object):
+        pass
+    class Animation(object):
+        @classmethod
+        def from_image_sequence(self, *a, **kw):
+            return FakePygletImage.Image()
 
 class FakePygletResource(object):
     path = None
 
     def image(self, filename):
-        return FakePygletImage()
+        return FakePygletImage.Image()
+    def media(self, filename, streaming=True):
+        return None
     def reindex(self):
         pass
 
@@ -27,11 +37,29 @@ class FakePygletSprite(object):
         def __init__(self, image, **kw):
             self.image = image
 
+class FakePygletMedia(object):
+    class Player(object):
+        def queue(self, source):
+            pass
+        def play(self):
+            pass
+        def next(self):
+            pass
+        def seek(self, where):
+            pass
+
+class FakePygletClock(object):
+    def schedule_once(self, fn, when):
+        pass
+
 class FakePyglet(object):
     gl = FakePygletGl()
     window = FakePygletWindow()
     resource = FakePygletResource()
     sprite = FakePygletSprite()
+    image = FakePygletImage()
+    media = FakePygletMedia()
+    clock = FakePygletClock()
 
 sys.modules['pyglet'] = FakePyglet()
 sys.modules['pyglet.window'] = FakePyglet.window
