@@ -167,30 +167,23 @@ class Dodo(object):
 
 class PowerBar(object):
 
-    steps = 21
+    steps = 7
 
     def __init__(self, dodopult):
         self.dodopult = dodopult
 
-        doc = pyglet.text.document.UnformattedDocument(' \n' * self.steps)
-        doc.set_style(0, len(doc.text), {
-                    'font_name': 'Andale Mono',
-                    'font_size': 20,
-                    'line_spacing': 12,
-                    'color': (255, 255, 255, 255)
-                })
-        self.power_bar = pyglet.text.layout.TextLayout(doc, 100, 800,
-                                                       multiline=True)
-        self.power_bar.anchor_y = 'top'
+        self.textures = pyglet.image.TextureGrid(
+                            pyglet.image.ImageGrid(
+                                load_image('power_bar.png'),
+                                self.steps, 1))
+        self.power_bar = pyglet.sprite.Sprite(self.textures[0], 20, 20)
+        self.power_bar.scale = 2.0
 
     def draw(self):
         range = float(self.dodopult.max_power - self.dodopult.min_power)
         power = (self.dodopult.power - self.dodopult.min_power) / range
-        n1 = 1 + int(power * (self.steps - 1))
-        n2 = self.steps - n1
-        self.power_bar.document.text = ' \n' * n2 +  '*\n' * n1
-        self.power_bar.x = 20
-        self.power_bar.y = window.height - 30
+        n = self.steps - int(power * (self.steps - 1)) - 1
+        self.power_bar.image = self.textures[n]
         self.power_bar.draw()
 
 
