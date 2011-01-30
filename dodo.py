@@ -13,7 +13,6 @@ from pyglet import gl
 
 DEBUG_VERSION = False
 
-
 log = logging.getLogger('dodo')
 
 if DEBUG_VERSION:
@@ -23,6 +22,9 @@ if DEBUG_VERSION:
 
 pyglet.resource.path = ['assets']
 pyglet.resource.reindex()
+
+
+window = None
 
 
 def load_image(filename, **kw):
@@ -483,7 +485,6 @@ class Map(object):
             y += self.tile_height
         return y
 
-window = None
 
 class Camera(object):
 
