@@ -621,11 +621,20 @@ class Game(object):
         for dodo in self.dodos:
             if dodo.is_alive and dodo.y < self.sea.level:
                 dodo.go_extinct()
-        if self.current_level.next is None:
-            log.debug("Game over")
+        if (self.current_level.next is None or
+            self.current_level.next.next is None):
+            self.game_over()
         else:
             self.current_level = self.current_level.next
             self.current_level.place(self.dodopult)
+
+    def game_over(self):
+        log.debug("Game over")
+        bunny = Dodo(self)
+        lvl = self.game_map.levels[-1]
+        bunny.x = (lvl.left + lvl.right) / 2
+        bunny.y = lvl.height - self.game_map.tile_height * 6.5
+        self.camera.focus_on(bunny)
 
     def draw(self):
         self.sky.draw()
@@ -677,6 +686,9 @@ class Main(object):
             g.sea.level = max(g.sea.level + 10,
                               g.current_level.height - window.height // 2)
         if symbol == key.SLASH:
+            # Note: leaves update() methods running, which maybe ain't bad
+            # -- eradicating a dodo mid-flight won't leave the camera focus
+            # stuck on it then
             del self.game.dodos[::2]
         if symbol == key.PLUS:
             self.game.add_dodo()
