@@ -669,6 +669,9 @@ class Game(object):
                     above += 1
                 elif dodo.y == self.current_level.height:
                     here += 1
+        if self.game.dodopult.payload:
+            here += 1
+            above -= 1
         if here == 0 and above > 0:
             log.debug("Going to next level with %d live dodos", above)
             self.next_level()
