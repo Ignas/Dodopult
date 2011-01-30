@@ -50,8 +50,8 @@ class Dodo(object):
     ready_image.anchor_x = 17
     ready_image.anchor_y = 13
 
-    dead_image = load_image('deado.png')
-    dead_image.anchor_x = 19
+    dead_image = load_image('Dodo_broken.png')
+    dead_image.anchor_x = -10
 
     SPRITE_SCALE = 0.7
 
