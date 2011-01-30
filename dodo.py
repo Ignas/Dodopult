@@ -833,7 +833,8 @@ class Main(pyglet.window.Window):
         elif symbol != key.F:
             self.game.help.help.visible = False
 
-        if self.game.game_is_over:
+        if (self.game.game_is_over
+            and self.game.game_over_time >= self.game.game_over_animation):
             self.new_game()
 
         if symbol == key.SPACE:
