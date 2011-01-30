@@ -24,8 +24,9 @@ def load_image(filename):
 window = pyglet.window.Window(width=1024, height=600,
                               resizable=True,
                               caption='Save the Dodos')
+window.set_minimum_size(320, 200) # does not work on linux with compiz
 window.maximize()
-window.set_mouse_visible(False)
+window.set_mouse_visible(True)
 
 
 @contextmanager
