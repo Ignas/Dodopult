@@ -2,18 +2,18 @@ APP_NAME = 'Dodopult'
 
 
 cfg = {
-    'name':APP_NAME,
-    'version':'1.0',
-    'description':'',
-    'author':'',
-    'author_email':'',
-    'url':'',
-    
-    'py2exe.target':'',
+    'name': APP_NAME,
+    'version': '1.0dev',
+    'description': 'A simple game',
+    'author': 'Ignas Mikalajunas and Marius Gedminas',
+    'author_email': '',
+    'url': '',
+
+    'py2exe.target': '',
 #    'py2exe.icon': 'icon.ico', #64x64
     'py2exe.binary': APP_NAME, #leave off the .exe, it will be added
     }
-    
+
 # usage: python setup.py command
 #
 # sdist - build a source dist
@@ -35,13 +35,12 @@ import shutil
 try:
     cmd = sys.argv[1]
 except IndexError:
-    print 'Usage: setup.py py2exe'
-    raise SystemExit
+    raise SystemExit('Usage: setup.py py2exe')
 
 # utility for adding subdirectories
-def add_files(dest,generator):
+def add_files(dest, generator):
     for dirpath, dirnames, filenames in generator:
-        for name in 'CVS', '.svn':
+        for name in 'CVS', '.svn', '.git':
             if name in dirnames:
                 dirnames.remove(name)
 
@@ -66,11 +65,11 @@ src.extend(glob.glob('*.py'))
 
 # build the sdist target
 if cmd == 'sdist':
-    f = open("MANIFEST.in","w")
+    f = open("MANIFEST.in", "w")
     for l in data: f.write("include "+l+"\n")
     for l in src: f.write("include "+l+"\n")
     f.close()
-    
+
     setup(
         name=cfg['name'],
         version=cfg['version'],
@@ -82,21 +81,21 @@ if cmd == 'sdist':
 
 # build the py2exe target
 if cmd in ('py2exe',):
-    dist_dir = os.path.join('dist',cfg['py2exe.target'])
+    dist_dir = os.path.join('dist', cfg['py2exe.target'])
     data_dir = dist_dir
-    
+
     src = 'dodo.py'
     dest = cfg['py2exe.binary']+'.py'
-    shutil.copy(src,dest)
-    
+    shutil.copy(src, dest)
+
     setup(
-        options={'py2exe':{
-            'dist_dir':dist_dir,
-            'dll_excludes':['_dotblas.pyd','_numpy.pyd']
+        options={'py2exe': {
+            'dist_dir': dist_dir,
+            'dll_excludes': ['_dotblas.pyd', '_numpy.pyd']
             }},
         windows=[{
-            'script':dest,
-            #'icon_resources':[(1,cfg['py2exe.icon'])],
+            'script': dest,
+            #'icon_resources': [(1, cfg['py2exe.icon'])],
             }],
         )
 
@@ -108,7 +107,7 @@ def make_dirs(dname_):
         if dname == None:
             dname = parts.pop(0)
         else:
-            dname = os.path.join(dname,parts.pop(0))
+            dname = os.path.join(dname, parts.pop(0))
         if not os.path.isdir(dname):
             os.mkdir(dname)
 
@@ -116,7 +115,7 @@ def make_dirs(dname_):
 if cmd in ('py2exe',):
     dest = data_dir
     for fname in data:
-        dname = os.path.join(dest,os.path.dirname(fname))
+        dname = os.path.join(dest, os.path.dirname(fname))
         make_dirs(dname)
         if not os.path.isdir(fname):
-            shutil.copy(fname,dname)
+            shutil.copy(fname, dname)
