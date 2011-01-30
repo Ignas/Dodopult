@@ -549,7 +549,7 @@ class Clouds(object):
         self.sprites = []
         map = game.game_map
         n = map.map_width * map.map_height * self.parallax ** 2 * self.density
-        for i in range(n):
+        for i in range(int(n)):
             x = random.uniform(0, map.map_width * abs(self.parallax))
             y = random.uniform(0, map.map_height * abs(self.parallax))
             s = pyglet.sprite.Sprite(self.image, x, y,
@@ -575,7 +575,7 @@ class Sea(object):
         max_throw_distance = game.dodopult.max_power ** 2 / game.gravity
         w = self.game.game_map.map_width + window.width + max_throw_distance
 
-        for x in xrange(0, w, image.width):
+        for x in xrange(0, int(w), image.width):
             s = pyglet.sprite.Sprite(image, x, 0,
                                      batch=self.batch)
             self.first_layer.append(s)
