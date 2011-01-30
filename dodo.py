@@ -22,7 +22,9 @@ def load_image(filename):
 
 
 window = pyglet.window.Window(width=1024, height=600,
+                              resizable=True,
                               caption='Save the Dodos')
+window.maximize()
 window.set_mouse_visible(False)
 
 
