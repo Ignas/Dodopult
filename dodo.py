@@ -792,7 +792,7 @@ class Main(pyglet.window.Window):
                                    resizable=True,
                                    caption='Save the Dodos')
         self.set_minimum_size(320, 200) # does not work on linux with compiz
-        self.maximize()
+        self.set_fullscreen()
         self.set_mouse_visible(True)
         self.set_icon(pyglet.image.load(
             os.path.join(pyglet.resource.location('Dodo.png').path, 'Dodo.png')))
