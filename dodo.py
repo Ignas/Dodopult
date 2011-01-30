@@ -739,6 +739,8 @@ class Main(object):
             # Note: leaves update() methods running, which maybe ain't bad
             # -- eradicating a dodo mid-flight won't leave the camera focus
             # stuck on it then
+            for dodo in self.game.dodos[::2]:
+                dodo.sprite.visible = False
             del self.game.dodos[::2]
         if symbol == key.PLUS:
             self.game.add_dodo()
