@@ -677,6 +677,7 @@ class Game(object):
         for dodo in self.dodos:
             if dodo.is_alive and dodo.y < self.sea.level:
                 dodo.go_extinct()
+                dodo.sprite.visible = False # sank below the water, so there!
         if (self.current_level.next is None or
             self.current_level.next.next is None):
             self.game_over()
