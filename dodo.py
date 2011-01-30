@@ -16,7 +16,7 @@ log.setLevel(logging.DEBUG)
 log.addHandler(logging.StreamHandler())
 
 
-pyglet.resource.path = ['assets']
+pyglet.resource.path = ['assets', 'assets/sounds']
 pyglet.resource.reindex()
 
 
@@ -43,6 +43,8 @@ def gl_state(bits=gl.GL_ALL_ATTRIB_BITS):
 
 
 class Dodo(object):
+
+    thud = pyglet.resource.media('thud.wav', streaming=False)
 
     standing_image = load_image('Dodo.png')
     standing_image.anchor_y = 12
@@ -148,6 +150,10 @@ class Dodo(object):
                     self.x = x2
                     self.y = y2
                     self.go_extinct()
+                    player = pyglet.media.Player()
+                    player.queue(self.thud)
+                    player.seek(1)
+                    player.play()
                 else:
                     self.x = x1
                     self.y = y1
