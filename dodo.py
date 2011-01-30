@@ -369,6 +369,7 @@ class Map(object):
         self.tile_height = 100
 
         self.map_width = max(map(len, self.lines)) * self.tile_width
+        self.map_height = len(self.lines) * self.tile_height
 
         self.texture = pyglet.image.TextureGrid(
                         pyglet.image.ImageGrid(load_image('map.png'), 3, 1))
@@ -523,6 +524,32 @@ class Sky(object):
                 self.background.blit(-100, -300, height=1600, width=window.width+200)
 
 
+class Clouds(object):
+
+    parallax = -0.5
+    density = 1 / 400000. # 1 cloud in square mm
+
+    def __init__(self, game):
+        self.game = game
+        self.batch = pyglet.graphics.Batch()
+        self.image = load_image('cloud.png')
+        self.sprites = []
+        map = game.game_map
+        n = map.map_width * map.map_height * self.parallax ** 2 * self.density
+        for i in range(n):
+            x = random.uniform(0, map.map_width * abs(self.parallax))
+            y = random.uniform(0, map.map_height * abs(self.parallax))
+            s = pyglet.sprite.Sprite(self.image, x, y,
+                                     batch=self.batch)
+            self.sprites.append(s)
+
+    def draw(self):
+        with gl_matrix():
+            gl.glTranslatef(self.game.camera.x * self.parallax,
+                            self.game.camera.y * self.parallax, 0)
+            self.batch.draw()
+
+
 class Sea(object):
 
     def __init__(self, game):
@@ -590,6 +617,7 @@ class Game(object):
         pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
 
         self.sky = Sky(self)
+        self.clouds = Clouds(self)
 
         self.dodos = []
         for dodo in range(self.INITIAL_DODOS):
@@ -638,6 +666,7 @@ class Game(object):
 
     def draw(self):
         self.sky.draw()
+        self.clouds.draw()
         self.game_map.draw()
         with gl_matrix():
             gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
