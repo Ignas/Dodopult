@@ -660,7 +660,7 @@ class Game(object):
         pyglet.clock.schedule_interval(dodo.update, self.update_freq)
         self.dodos.append(dodo)
 
-    def count_surviving_dodos(self):
+    def count_surviving_dodos(self, dt=None):
         above = 0
         here = 0
         for dodo in self.dodos:
@@ -684,6 +684,7 @@ class Game(object):
         else:
             self.current_level = self.current_level.next
             self.current_level.place(self.dodopult)
+            pyglet.clock.schedule_once(self.count_surviving_dodos, 3.0)
 
     def game_over(self):
         log.debug("Game over")
