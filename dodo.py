@@ -200,7 +200,7 @@ class Dodopult(object):
                       load_image('Catapult_3.png'),
                       load_image('Catapult_2.png')]
 
-    reload_delay = 2 # animation duration, seconds
+    reload_delay = 0.75 # animation duration, seconds
 
     SPRITE_SCALE = 0.5
 
@@ -506,7 +506,7 @@ class Camera(object):
 
     def remove_focus(self, obj):
         if self.focus is obj:
-            self.focus_timer = 1.5 # seconds
+            self.focus_timer = 1 # seconds
 
     def update(self, dt):
         self.x = int(self.x - (self.x - self.target_x) * 0.1)
@@ -606,7 +606,7 @@ class Sea(object):
 
     def update(self, dt):
         self.phase += dt * 3
-        self.level += dt * 1.414 ** (self.game.current_level.number - 1)
+        self.level += 2 * (dt * 1.414 ** (self.game.current_level.number - 1))
         if self.game.dodopult.y < self.level:
             self.game.dodopult.y = self.level
         if self.level >= self.game.current_level.height:
