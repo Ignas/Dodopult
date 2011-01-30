@@ -166,6 +166,35 @@ class Dodo(object):
                 self.dx *= (1 - self.game.air_resistance)
 
 
+class PowerBar(object):
+
+    steps = 21
+
+    def __init__(self, dodopult):
+        self.dodopult = dodopult
+
+        doc = pyglet.text.document.UnformattedDocument(' \n' * self.steps)
+        doc.set_style(0, len(doc.text), {
+                    'font_name': 'Andale Mono',
+                    'font_size': 20,
+                    'line_spacing': 12,
+                    'color': (255, 255, 255, 255)
+                })
+        self.power_bar = pyglet.text.layout.TextLayout(doc, 100, 800,
+                                                       multiline=True)
+        self.power_bar.anchor_y = 'top'
+
+    def draw(self):
+        range = float(self.dodopult.max_power - self.dodopult.min_power)
+        power = (self.dodopult.power - self.dodopult.min_power) / range
+        n1 = 1 + int(power * (self.steps - 1))
+        n2 = self.steps - n1
+        self.power_bar.document.text = ' \n' * n2 +  '*\n' * n1
+        self.power_bar.x = 20
+        self.power_bar.y = window.height - 30
+        self.power_bar.draw()
+
+
 class Dodopult(object):
 
     armed_sprite = loaded_sprite = load_image('Catapult_1.png')
@@ -212,19 +241,6 @@ class Dodopult(object):
         self.power = self.min_power
         self.powering_up = False
 
-        doc = pyglet.text.document.UnformattedDocument(' \n' * 21)
-        doc.set_style(0, len(doc.text), {
-                    'font_name': 'Andale Mono',
-                    'font_size': 20,
-                    'line_spacing': 12,
-                    'color': (255, 255, 255, 255)
-                })
-        self.power_bar = pyglet.text.layout.TextLayout(doc, 100, 800,
-                                                       multiline=True)
-        self.power_bar.anchor_y = 'top'
-        self.power_bar.x = 20
-        self.power_bar.y = window.height - 30
-
     @property
     def x(self):
         return self.sprite.x
@@ -249,10 +265,6 @@ class Dodopult(object):
         self.sprite.image = sprite
 
     def update(self, dt):
-        power = (self.power - self.min_power) / (self.max_power - self.min_power)
-        n1 = 1 + int(power * 20)
-        n2 = 21 - n1
-        self.power_bar.document.text = ' \n' * n2 +  '*\n' * n1
         if self.powering_up:
             self.power = min(self.power + dt * self.power_increase, self.max_power)
         if not self.armed:
@@ -282,9 +294,6 @@ class Dodopult(object):
             self.powering_up = True
 
     def draw(self):
-        with gl_matrix():
-            gl.glLoadIdentity()
-            self.power_bar.draw()
         self.sprite.draw()
         if self.payload:
             x, y = self.payload.x + 5, self.payload.y
@@ -614,6 +623,8 @@ class Game(object):
         self.current_level.place(self.dodopult)
         pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
 
+        self.powerbar = PowerBar(self.dodopult)
+
         self.sea = Sea(self)
         pyglet.clock.schedule_interval(self.sea.update, 1 / 60.0)
 
@@ -681,6 +692,7 @@ class Game(object):
                     dodo.draw()
                 self.dodopult.draw()
                 self.sea.draw()
+        self.powerbar.draw()
 
 
 class Main(object):
