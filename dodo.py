@@ -613,6 +613,8 @@ class Game(object):
 
     game_over_animation = 5.0 # seconds
 
+    update_freq = 1 / 60.
+
     INITIAL_DODOS = 20
 
     def __init__(self):
@@ -623,12 +625,12 @@ class Game(object):
 
         self.dodopult = Dodopult(self)
         self.current_level.place(self.dodopult)
-        pyglet.clock.schedule_interval(self.dodopult.update, 0.1)
+        pyglet.clock.schedule_interval(self.dodopult.update, self.update_freq)
 
         self.powerbar = PowerBar(self.dodopult)
 
         self.sea = Sea(self)
-        pyglet.clock.schedule_interval(self.sea.update, 1 / 30.0)
+        pyglet.clock.schedule_interval(self.sea.update, self.update_freq)
 
         self.sky = Sky(self)
         self.clouds = Clouds(self)
@@ -639,14 +641,14 @@ class Game(object):
             self.add_dodo()
 
         self.camera = Camera(self)
-        pyglet.clock.schedule_interval(self.camera.update, 1 / 30.0)
+        pyglet.clock.schedule_interval(self.camera.update, self.update_freq)
 
-        pyglet.clock.schedule_interval(self.update, 1 / 30.0)
+        pyglet.clock.schedule_interval(self.update, self.update_freq)
 
     def add_dodo(self):
         dodo = Dodo(self)
         self.current_level.place(dodo)
-        pyglet.clock.schedule_interval(dodo.update, 1 / 30.0)
+        pyglet.clock.schedule_interval(dodo.update, self.update_freq)
         self.dodos.append(dodo)
 
     def count_surviving_dodos(self):
