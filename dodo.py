@@ -11,9 +11,14 @@ from pyglet.window import key
 from pyglet import gl
 
 
+DEBUG_VERSION = False
+
+
 log = logging.getLogger('dodo')
-log.setLevel(logging.DEBUG)
-log.addHandler(logging.StreamHandler())
+
+if DEBUG_VERSION:
+    log.setLevel(logging.DEBUG)
+    log.addHandler(logging.StreamHandler())
 
 
 pyglet.resource.path = ['assets']
@@ -788,6 +793,8 @@ class Main(object):
         if symbol == key.F:
             window.set_fullscreen(not window.fullscreen)
         # DEBUG/CHEAT CODES
+        if not DEBUG_VERSION:
+            return
         if symbol == key.ASCIITILDE:
             g = self.game
             g.sea.level = max(g.sea.level + 10,
