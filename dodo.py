@@ -801,6 +801,9 @@ class Main(pyglet.window.Window):
         self.fps_display.label.y = self.height - 50
         self.fps_display.label.x = self.width - 170
 
+    def new_game(self):
+        self.game = Game()
+
     def on_draw(self):
         self.clear()
         self.game.draw()
@@ -829,12 +832,17 @@ class Main(pyglet.window.Window):
         elif symbol != key.F:
             self.game.help.help.visible = False
 
+        if self.game.game_is_over:
+            self.new_game()
+
         if symbol == key.SPACE:
             self.game.dodopult.start_powering_up()
         if symbol in (key.LALT, key.RALT, key.Z):
             self.game.dodopult.try_load()
         if symbol == key.F:
             self.set_fullscreen(not self.fullscreen)
+        if symbol == key.N:
+            self.new_game()
 
         # DEBUG/CHEAT CODES
         if not DEBUG_VERSION:
@@ -853,7 +861,7 @@ class Main(pyglet.window.Window):
             del self.game.dodos[::2]
         if symbol == key.PLUS:
             self.game.add_dodo()
-        if symbol == key.N:
+        if symbol == key.L:
             if (self.game.current_level.next is not None and
                 self.game.current_level.next.next is not None):
                 self.game.next_level()
