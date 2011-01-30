@@ -208,8 +208,8 @@ class Dodopult(object):
 
     PICKUP_RANGE = (-15, +15)
 
-    MARGIN_LEFT = -60
-    MARGIN_RIGHT = 130
+    MARGIN_LEFT = -40
+    MARGIN_RIGHT = 110
 
     AIM_R = 50
     AIM_SIZE = 0.15
