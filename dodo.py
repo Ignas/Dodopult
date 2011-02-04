@@ -491,6 +491,8 @@ class Map(object):
 
 class Camera(object):
 
+    manual_control = False
+
     def __init__(self, game):
         self.game = game
         self.x = 0
@@ -549,6 +551,8 @@ class Camera(object):
             self.focus_timer = 1 # seconds
 
     def update(self, dt):
+        if self.manual_control:
+            return
         self.x = int(self.x - (self.x - self.target_x) * 0.1)
         self.y = int(self.y - (self.y - self.target_y) * 0.1)
         if self.focus:
@@ -844,6 +848,10 @@ class Main(pyglet.window.Window):
             # starting new game, closing help screen
             return
 
+        if DEBUG_VERSION and symbol == key.C:
+            self.game.camera.manual_control = True
+            return
+
         if symbol == key.ESCAPE:
             if self.game.help.help.visible:
                 self.game.help.help.visible = False
@@ -893,6 +901,13 @@ class Main(pyglet.window.Window):
     def on_key_release(self, symbol, modifiers):
         if symbol == key.SPACE:
             self.game.dodopult.fire()
+        if symbol == key.C:
+            self.game.camera.manual_control = False
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        if DEBUG_VERSION and self.game.camera.manual_control:
+            self.game.camera.x -= dx
+            self.game.camera.y -= dy
 
     def on_resize(self, width, height):
         if self.fps_display:
