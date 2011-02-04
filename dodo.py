@@ -460,7 +460,6 @@ class Map(object):
 
     def draw(self):
         with gl_matrix():
-            gl.glTranslatef(self.game.camera.x * -1, self.game.camera.y * -1, 0)
             self.background_batch.draw()
 
     def vertical_wall_left_of(self, x):
@@ -793,9 +792,9 @@ class Game(object):
                 low_y_hint = self.camera.y
             self.sky.draw()
             self.clouds.draw()
-            self.game_map.draw()
             with gl_matrix():
                 gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
+                self.game_map.draw()
                 self.dodo_batch.draw()
                 self.dodopult.draw()
                 self.sea.draw(low_y_hint)
