@@ -595,10 +595,13 @@ class Clouds(object):
         self.batch = pyglet.graphics.Batch()
         self.sprites = []
         map = game.game_map
-        n = map.map_width * map.map_height * self.parallax ** 2 * self.density
+        w, h = map.map_width, map.map_height
+        w += 5000 # add some sky to the right of the map
+        h += 5000 # add some sky above the topmost cliff
+        n = w * h * self.parallax ** 2 * self.density
         for i in range(int(n)):
-            x = random.uniform(0, map.map_width * abs(self.parallax))
-            y = random.uniform(0, map.map_height * abs(self.parallax))
+            x = random.uniform(0, w * abs(self.parallax))
+            y = random.uniform(0, h * abs(self.parallax))
             s = pyglet.sprite.Sprite(random.choice(self.images), x, y,
                                      batch=self.batch)
             self.sprites.append(s)
