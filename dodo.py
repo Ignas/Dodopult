@@ -12,6 +12,7 @@ from pyglet import gl
 
 
 DEBUG_VERSION = False
+DEBUG_EVENTS = False
 
 
 log = logging.getLogger('dodo')
@@ -906,6 +907,8 @@ class Main(pyglet.window.Window):
 def main():
     global window
     window = Main()
+    if DEBUG_EVENTS:
+        window.push_handlers(pyglet.window.event.WindowEventLogger())
     window.run()
 
 
