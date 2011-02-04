@@ -629,14 +629,15 @@ class Sea(object):
             self.first_layer.append(s)
         self.phase = 0
 
-    def draw(self):
+    def draw(self, low_y_hint=0):
         x = -75
         y = self.level - self.image.height // 3
         radius_iter = itertools.cycle([-10, 15, -20, 15])
         phase_iter = itertools.cycle([0, 1, 0.5, 1.5])
         phase_mult_iter = itertools.cycle([1.2, 1, 1.1, 1.4, 1.5, 1.6, 1.3])
         phase = 0
-        while y > self.game.camera.y - 100:
+        extra = 100
+        while y > low_y_hint - self.image.height:
             radius = radius_iter.next()
             radius_x = radius * 2
             radius_y = radius * 0.5
@@ -651,6 +652,8 @@ class Sea(object):
     def update(self, dt):
         self.phase += dt * 3
         if self.game.help.help.visible:
+            return
+        if self.level > self.game.game_map.map_height:
             return
         self.level += 2 * (dt * 2.5 ** (self.game.current_level.number - 1))
         if self.game.dodopult.y < self.level:
@@ -776,10 +779,13 @@ class Game(object):
         with gl_matrix():
             if self.game_is_over:
                 t = self.game_over_time / self.game_over_animation
-                scale = 1 - t * (1 - 1/5.)
+                scale = 1 - t * (1 - 1/5.)  # linear transition from 1X to 5X
                 gl.glTranslatef(window.width / 2, window.height // 2, 0)
                 gl.glScalef(scale, scale, 1.0)
                 gl.glTranslatef(-window.width / 2, -window.height // 2, 0)
+                low_y_hint = self.camera.y - window.height / 2 / scale
+            else:
+                low_y_hint = self.camera.y
             self.sky.draw()
             self.clouds.draw()
             self.game_map.draw()
@@ -787,7 +793,7 @@ class Game(object):
                 gl.glTranslatef(self.camera.x * -1, self.camera.y * -1, 0)
                 self.dodo_batch.draw()
                 self.dodopult.draw()
-                self.sea.draw()
+                self.sea.draw(low_y_hint)
                 self.powerbar.draw()
         self.help.draw()
 
