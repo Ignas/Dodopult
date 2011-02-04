@@ -831,6 +831,12 @@ class Main(pyglet.window.Window):
             self.game.dodopult.aim_down()
 
     def on_key_press(self, symbol, modifiers):
+        if symbol == key.F:
+            self.set_fullscreen(not self.fullscreen)
+            # Skip further processing that happens on every other key:
+            # starting new game, closing help screen
+            return
+
         if symbol == key.ESCAPE:
             if self.game.help.help.visible:
                 self.game.help.help.visible = False
@@ -839,7 +845,7 @@ class Main(pyglet.window.Window):
 
         if symbol == key.F1:
             self.game.help.help.visible = True
-        elif symbol != key.F:
+        else:
             self.game.help.help.visible = False
 
         if (self.game.game_is_over
@@ -850,8 +856,6 @@ class Main(pyglet.window.Window):
             self.game.dodopult.start_powering_up()
         if symbol in (key.LALT, key.RALT, key.Z):
             self.game.dodopult.try_load()
-        if symbol == key.F:
-            self.set_fullscreen(not self.fullscreen)
         if symbol == key.N:
             self.new_game()
 
